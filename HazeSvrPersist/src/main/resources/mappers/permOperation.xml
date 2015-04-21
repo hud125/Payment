@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.perm.PermOperationMapper">
+
+	<!-- result maps -->
+	<resultMap id="permOperationMap" type="PermOperationEntity">
+		<id column="operation_id" property="ID" />
+		<result column="operation_name" property="operationName" />
+		<result column="op_display_name" property="displayName" />
+		<result column="op_comments" property="comments" />
+		<result column="op_cr_date" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="op_up_date" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+
+	<insert id="insert" parameterType="PermOperationEntity" >
+		INSERT INTO p_operation 
+		(operation_id, operation_name, display_name, comments, create_date, update_date)
+		VALUES 
+		(#{ID}, #{operationName}, #{displayName}, #{comments}, #{createDate}, #{updateDate})
+	</insert>
+
+	<sql id="defaultSelect">
+		SELECT  op.operation_id, op.operation_name, op.display_name op_display_name, 
+				op.comments op_comments, op.create_date op_cr_date, op.update_date op_up_date
+		FROM p_operation op 
+	</sql>
+
+	<select id="selectOne" parameterType="string" resultMap="permOperationMap">
+		<include refid="defaultSelect"/>
+		WHERE op.operation_id = #{ID}
+	</select>
+
+	<select id="selectBy" resultMap="permOperationMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.ID != null">
+					op.operation_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.operationName != null">
+					AND op.operation_name = #{filterEntity.operationName}
+				</if>
+				<if test="filterEntity.displayName != null">
+					AND op.display_name = #{filterEntity.displayName}
+				</if>
+				<if test="filterEntity.createDate != null">
+					AND op.create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate != null">
+					AND op.update_date = #{filterEntity.updateDate}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+
+	<select id="selectAll" resultMap="permOperationMap">
+		<include refid="defaultSelect"/>
+	</select>
+	
+	<sql id="defaultCount">
+		SELECT count(*) FROM p_operation op 
+	</sql>
+	
+	<select id="countBy" parameterType="PermOperationEntity" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.operationName != null">
+					op.operation_name = #{filterEntity.operationName}
+				</if>
+				<if test="filterEntity.displayName != null">
+					AND op.display_name = #{filterEntity.displayName}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+
+	<update id="update" parameterType="PermOperationEntity">
+		UPDATE p_operation 
+		<set>
+	      <if test="operationName != null">operation_name = #{operationName},</if>
+	      <if test="displayName != null">display_name = #{displayName},</if>
+	      <if test="comments != null">comments = #{comments},</if>
+	      <if test="createDate != null">create_date = #{createDate},</if>
+	      <if test="updateDate != null">update_date = #{updateDate},</if>
+	    </set>
+		WHERE operation_id = #{ID}
+	</update>
+
+	<delete id="delete" parameterType="string">
+		DELETE FROM p_operation WHERE operation_id = #{ID}
+	</delete>
+
+</mapper>

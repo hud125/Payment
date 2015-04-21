@@ -1,0 +1,14 @@
+<validation>
+	<alias source="com.aurfy.haze.validation" dest="haze" />
+	<alias source="com.aurfy.haze.core.model" dest="model" />
+	<rule fieldName="enumTest" validator="haze.EnumValidator" target="haze.EnumTest" nullable="false" />
+	<rule fieldName="currency" validator="haze.PseudoEnumValidator" target="model.Currency" method="parseByName"
+		nullable="false" />
+	<rule fieldName="merId" validator="haze.TextValidator" minLength="8" maxLength="32" nullable="false" />
+	<rule fieldName="txnAmount" validator="haze.NumericValidator" min="0" max="999999999999" nullable="false" />
+	<rule fieldName="browserCallbackUrl" validator="haze.URLValidator" minLength="3" maxLength="999" nullable="true" />
+	<rule fieldName="serverCallbackUrl" validator="haze.URLValidator" nullable="false" />
+	<rule fieldName="orderTime" validator="haze.DateValidator" format="yyyyMMddHHmmss" nullable="false" />
+	<rule fieldName="userName" validator="haze.RegexValidator" pattern="[a-z0-9]{6,32}" caseSensitive="false"
+		nullable="true" />
+</validation>

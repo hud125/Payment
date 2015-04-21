@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.conf.TerminalInfoMapper">
+
+        <resultMap id="terminalInfoMap" type="TerminalInfoEntity">
+            <id column="terminal_id" property="ID" />
+            <result column="mer_id" property="merID" />
+            
+            <association property="terminalMfr" javaType="TerminalMfrEntity" resultMap="com.aurfy.haze.dao.conf.TerminalMfrMapper.terminalMfrMap" />
+        </resultMap>
+        
+      <insert id="insert" parameterType="TerminalInfoEntity" statementType="PREPARED">
+		INSERT INTO terminal_info 
+		(terminal_id,terminal_mfr_id,mer_id)
+		VALUES 
+		(#{ID},#{terminalMfr.ID},#{merID})
+	  </insert>
+	    
+        
+     <sql id="defaultSelect">
+	  	 SELECT  termi.terminal_id, termi.mer_id, 
+				co.terminal_mfr_id,co.factory_name,co.contactor,co.telphone,co.cellphone,co.url,co.create_date,co.update_date
+		 FROM terminal_info termi
+		 	INNER JOIN terminal_mfr co on termi.terminal_mfr_id = co.terminal_mfr_id
+      </sql>  
+      
+      <select id="selectOne" parameterType="string" resultMap="terminalInfoMap">
+		<include refid="defaultSelect"/>
+		 WHERE termi.terminal_id = #{ID}
+	  </select>
+	  
+	  <select id="selectBy" resultMap="terminalInfoMap">
+	      <include refid="defaultSelect" />
+	      <where>
+	          <if test="filterEntity != null">
+	              <if test="filterEntity.ID != null">
+					 termi.terminal_id = #{filterEntity.ID}
+				  </if>
+				  <if test="filterEntity.terminalMfr != null">
+				      <if test="filterEntity.terminalMfr != null">
+						AND termi.terminal_mfr_id = #{filterEntity.terminalMfr.ID}
+					  </if>
+				  </if>
+				  <if test="filterEntity.merID != null">
+					AND termi.mer_id = #{filterEntity.merID}
+				</if>
+	          </if>
+	      </where>
+	  </select>
+	  
+	  <select id="selectAll" resultMap="terminalInfoMap">
+		<include refid="defaultSelect"/>
+	  </select>
+	  
+	   <sql id="defaultCount">
+         SELECT count(*) FROM  terminal_info termi  
+	  </sql>
+	  
+	  <select id="countBy" parameterType="AddressBookEntity"  resultType="int">
+	      <include refid="defaultCount" />
+	      <where>
+	          <if test="filterEntity != null">
+	              <if test="filterEntity.ID != null">
+					 termi.terminal_id = #{filterEntity.ID}
+				  </if>
+				  <if test="filterEntity.terminalMfr != null">
+				      <if test="filterEntity.terminalMfr != null">
+						AND termi.terminal_mfr_id = #{filterEntity.terminalMfr.ID}
+					  </if>
+				  </if>
+				  <if test="filterEntity.merID != null">
+					AND termi.mer_id = #{filterEntity.merID}
+				</if>
+	          </if>
+	      </where>
+	  </select>
+	  
+	  <select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	  </select>
+
+
+      <update id="update" parameterType="TerminalInfoEntity" >
+		update terminal_info  
+	    <set>
+	      <if test="terminalMfr != null">terminal_mfr_id = #{terminalMfr.ID},</if>
+	      <if test="merID != null">mer_id = #{merID},</if>    
+	    </set>
+		where terminal_id = #{ID}
+	</update>
+       
+  
+       
+    <delete id="delete" parameterType="string" >
+		DELETE FROM terminal_info WHERE terminal_id = #{ID}
+	</delete>
+
+
+
+</mapper>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.perm.PermEntryMapper">
+
+	<!-- result maps -->
+	<resultMap id="permEntryMap" type="PermEntryEntity">
+		<id column="perm_entry_id" property="ID" />
+		<result column="entry_key" property="entryKey" />
+		<result column="entry_display_name" property="displayName" />
+		<result column="entry_comments" property="comments" />
+		<result column="entry_cr_date" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="entry_up_date" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+		
+		<association property="object" javaType="PermObjectEntity" resultMap="com.aurfy.haze.dao.perm.PermObjectMapper.permObjectMap" />
+		<association property="operation" javaType="PermOperationEntity" resultMap="com.aurfy.haze.dao.perm.PermOperationMapper.permOperationMap" />
+		
+	</resultMap>
+
+	<insert id="insert" parameterType="PermEntryEntity" >
+		INSERT INTO p_perm_entry 
+		(perm_entry_id, entry_key, display_name, comments, create_date, update_date,
+		object_id, operation_id)
+		VALUES 
+		(#{ID}, #{entryKey}, #{displayName}, #{comments}, #{createDate}, #{updateDate},
+		#{object.ID}, #{operation.ID})
+	</insert>
+
+	<sql id="defaultSelect">
+		SELECT  entry.perm_entry_id, entry.entry_key, entry.display_name entry_display_name, 
+				entry.comments entry_comments, entry.create_date entry_cr_date, entry.update_date entry_up_date,
+				obj.object_id, obj.object_name, obj.display_name obj_display_name, 
+				obj.comments obj_comments, obj.create_date obj_cr_date, obj.update_date obj_up_date,
+				op.operation_id, op.operation_name, op.display_name op_display_name, 
+				op.comments op_comments, op.create_date op_cr_date, op.update_date op_up_date
+		FROM p_perm_entry entry 
+			left join p_object obj on obj.object_id = entry.object_id
+			left join p_operation op on op.operation_id = entry.operation_id
+	</sql>
+
+	<select id="selectOne" parameterType="string" resultMap="permEntryMap">
+		<include refid="defaultSelect"/>
+		WHERE entry.perm_entry_id = #{ID}
+	</select>
+
+	<select id="selectBy" resultMap="permEntryMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.ID != null">
+					entry.perm_entry_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.entryKey != null">
+					AND entry.entry_key = #{filterEntity.entryKey}
+				</if>
+				<if test="filterEntity.displayName != null">
+					AND entry.display_name = #{filterEntity.displayName}
+				</if>
+				<if test="filterEntity.createDate != null">
+					AND entry.create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate != null">
+					AND entry.update_date = #{filterEntity.updateDate}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+
+	<select id="selectAll" resultMap="permEntryMap">
+		<include refid="defaultSelect"/>
+	</select>
+	
+	<sql id="defaultCount">
+		SELECT count(*) FROM p_perm_entry entry 
+	</sql>
+	
+	<select id="countBy" parameterType="PermEntryEntity" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.entryKey != null">
+					entry.entry_key = #{filterEntity.entryKey}
+				</if>
+				<if test="filterEntity.displayName != null">
+					AND entry.display_name = #{filterEntity.displayName}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+
+	<update id="update" parameterType="PermEntryEntity">
+		UPDATE p_perm_entry 
+		<set>
+	      <if test="entryKey != null">entry_key = #{entryKey},</if>
+	      <if test="displayName != null">display_name = #{displayName},</if>
+	      <if test="comments != null">comments = #{comments},</if>
+	      <if test="object != null">object_id = #{object.ID},</if>
+	      <if test="operation != null">operation_id = #{operation.ID},</if>
+	      <if test="createDate != null">create_date = #{createDate},</if>
+	      <if test="updateDate != null">update_date = #{updateDate},</if>
+	    </set>
+		WHERE perm_entry_id = #{ID}
+	</update>
+
+	<delete id="delete" parameterType="string">
+		DELETE FROM p_perm_entry WHERE perm_entry_id = #{ID}
+	</delete>
+	
+
+</mapper>

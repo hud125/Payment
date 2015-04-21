@@ -1,0 +1,7 @@
+/*
+ * C# Header file for aurfy.com
+ * 
+ * Please include any license file if necessary.
+ *
+ */
+

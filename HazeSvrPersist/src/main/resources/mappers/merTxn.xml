@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.txn.MerTxnMapper">
+
+	<!-- result maps -->
+	<resultMap id="merTxnMap" type="MerTxnEntity">
+		<id column="txn_id" property="ID" />
+		<result column="mer_id" property="merOrder.merRef.merId" />
+		<result column="sub_mer_id" property="merOrder.merRef.subMerId" />
+		<result column="mer_code" property="merOrder.merRef.merCode" />
+		<result column="sales_id" property="merOrder.merRef.salesId" />
+		<result column="agent_id" property="merOrder.merRef.agentId" />
+		<result column="psp_id" property="merOrder.merRef.pspId" />
+		<result column="txn_type" property="merOrder.txnType" />
+		<result column="txn_amount" property="merOrder.amount" />
+		<result column="txn_currency" property="merOrder.currency" />
+		<result column="mer_order_id" property="merOrder.orderId" />
+		<result column="mer_bill_desc" property="merOrder.billDesc" />
+		<result column="mer_order_detail" property="merOrder.orderDetail" />
+		<result column="mer_order_date" property="merOrder.orderDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="mer_order_timezone" property="merOrder.orderTimezone" />
+		<result column="mer_order_timeout" property="merOrder.orderTimeout" />
+		<result column="mer_customer_ip" property="merOrder.customerIp" />
+		<result column="mer_pay_timeout" property="merOrder.payTimeout" />
+		<result column="mer_preferred_bank" property="merOrder.preferredBank" />
+		<result column="txn_status" property="txnStatus" />
+		<result column="browser_notify_url" property="merOrder.browserNotifyUrl" />
+		<result column="server_notify_url" property="merOrder.serverNotifyUrl" />
+		<result column="settle_ref_id" property="settleRefId" />
+		<result column="pay_ref_id" property="payRefId" />
+		<result column="owner_id" property="ownerId" />
+		<result column="product_classifier" property="productClassifier" />
+		<result column="terminal_id" property="terminalId" />
+		<result column="protocol_ver" property="protocolVer" />
+		<result column="charset_encoding" property="charsetEncoding" />
+		<result column="sign_method" property="signMethod" />
+		<result column="txn_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="txn_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+
+	<insert id="insert" parameterType="MerTxnEntity">
+		INSERT INTO mer_txn
+		(txn_id, mer_id, sub_mer_id, mer_code, sales_id, 
+		 agent_id, psp_id, txn_type, txn_amount, 
+		 txn_currency, mer_order_id, mer_bill_desc, mer_order_detail, 
+		 mer_order_date, mer_order_timezone, mer_order_timeout, 
+		 mer_customer_ip, mer_pay_timeout, mer_preferred_bank,
+		 txn_status, browser_notify_url, server_notify_url, settle_ref_id, 
+		 pay_ref_id, owner_id, product_classifier, terminal_id, protocol_ver, 
+		 charset_encoding, sign_method, create_date, update_date)
+		VALUES
+		(#{ID}, #{merOrder.merRef.merId}, #{merOrder.merRef.subMerId}, #{merOrder.merRef.merCode}, #{merOrder.merRef.salesId},
+		 #{merOrder.merRef.agentId}, #{merOrder.merRef.pspId}, #{merOrder.txnType}, #{merOrder.amount},
+		 #{merOrder.currency}, #{merOrder.orderId}, #{merOrder.billDesc}, #{merOrder.orderDetail}, 
+		 #{merOrder.orderDate}, #{merOrder.orderTimezone}, #{merOrder.orderTimeout}, 
+		 #{merOrder.customerIp}, #{merOrder.payTimeout},#{merOrder.preferredBank}, 
+		 #{txnStatus}, #{merOrder.browserNotifyUrl}, #{merOrder.serverNotifyUrl}, #{settleRefId}, 
+		 #{payRefId}, #{ownerId}, #{productClassifier}, #{terminalId}, #{protocolVer}, 
+		 #{charsetEncoding}, #{signMethod}, #{createDate}, #{updateDate})
+	</insert>
+
+	<sql id="defaultSelect">
+		SELECT
+			txn.txn_id, txn.mer_id, txn.sub_mer_id, txn.mer_code, txn.sales_id, 
+		 	txn.agent_id, txn.psp_id, txn.txn_type, txn.txn_amount, 
+		 	txn.txn_currency, txn.mer_order_id, txn.mer_bill_desc, txn.mer_order_detail, 
+		 	txn.mer_order_date, txn.mer_order_timezone, txn.mer_order_timeout, 
+		 	txn.mer_customer_ip, txn.mer_pay_timeout, txn.mer_preferred_bank,
+		 	txn.txn_status, txn.browser_notify_url, txn.server_notify_url, txn.settle_ref_id, 
+		 	txn.pay_ref_id, txn.owner_id, txn.product_classifier, txn.terminal_id, txn.protocol_ver, 
+		 	txn.charset_encoding, txn.sign_method, txn.create_date txn_cr_dt, txn.update_date txn_up_dt
+		FROM mer_txn txn
+	</sql>
+	
+	<select id="selectOne" parameterType="string" resultMap="merTxnMap">
+		<include refid="defaultSelect" />
+		WHERE txn.txn_id = #{ID}
+	</select>
+	
+	<select id="selectBy" resultMap="merTxnMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					txn.txn_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.merOrder !=null">
+					<if test="filterEntity.merOrder.merRef !=null">
+						<if test="filterEntity.merRef.merId !=null">
+							AND txn.mer_id = #{filterEntity.merOrder.merRef.merId}
+						</if>
+						<if test="filterEntity.merRef.salesId !=null">
+							AND txn.sales_id = #{filterEntity.merOrder.merRef.salesId}
+						</if>
+					</if>
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	
+	<select id="selectAll" resultMap="merTxnMap">
+		<include refid="defaultSelect" />
+	</select>
+
+	<sql id="defaultCount">
+		SELECT count(*) FROM mer_txn txn
+	</sql>
+	
+	<select id="countBy" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					txn.txn_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.merOrder !=null">
+					<if test="filterEntity.merOrder.merRef !=null">
+						<if test="filterEntity.merRef.merId !=null">
+							AND txn.mer_id = #{filterEntity.merOrder.merRef.merId}
+						</if>
+						<if test="filterEntity.merRef.salesId !=null">
+							AND txn.sales_id = #{filterEntity.merOrder.merRef.salesId}
+						</if>
+					</if>
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+
+	<update id="update" parameterType="MerTxnEntity">
+		UPDATE mer_txn
+		<set>
+			<if test="merOrder != null">
+				<if test="merOrder.merRef != null">
+					<if test="merOrder.merRef.merId !=null">mer_id = #{merOrder.merRef.merId},</if>
+					<if test="merOrder.merRef.subMerId !=null">sub_mer_id = #{merOrder.merRef.subMerId},</if>
+					<if test="merOrder.merRef.merCode !=null">mer_code = #{merOrder.merRef.merCode},</if>
+					<if test="merOrder.merRef.salesId != null">sales_id = #{merOrder.merRef.salesId},</if>
+					<if test="merOrder.merRef.agentId != null">agent_id = #{merOrder.merRef.agentId},</if>
+					<if test="merOrder.merRef.pspId != null">psp_id = #{merOrder.merRef.pspId},</if>
+				</if>
+				<if test="merOrder.txnType != null">txn_type = #{merOrder.txnType},</if>
+				<if test="merOrder.amount != null">txn_amount = #{merOrder.amount},</if>
+				<if test="merOrder.currency != null">txn_currency = #{merOrder.currency},</if>
+				<if test="merOrder.orderId != null">mer_order_id = #{merOrder.orderId},</if>
+				<if test="merOrder.billDesc != null">mer_bill_desc = #{merOrder.billDesc},</if>
+				<if test="merOrder.orderDetail != null">mer_order_detail = #{merOrder.orderDetail},</if>
+				<if test="merOrder.orderDate != null">mer_order_date = #{merOrder.orderDate},</if>
+				<if test="merOrder.orderTimezone != null">mer_order_timezone = #{merOrder.orderTimezone},</if>
+				<if test="merOrder.orderTimeout != null">mer_order_timeout = #{merOrder.orderTimeout},</if>
+				<if test="merOrder.customerIp != null">mer_customer_ip = #{merOrder.customerIp},</if>
+				<if test="merOrder.payTimeout != null">mer_pay_timeout = #{merOrder.payTimeout},</if>
+				<if test="merOrder.preferredBank != null">mer_preferred_bank = #{merOrder.preferredBank},</if>
+				<if test="merOrder.browserNotifyUrl != null">browser_notify_url = #{merOrder.browserNotifyUrl},</if>
+				<if test="merOrder.serverNotifyUrl != null">server_notify_url = #{merOrder.serverNotifyUrl},</if>
+				<if test="updateDate != null">browser_notify_url = #{updateDate},</if>
+			</if>
+			<if test="txnStatus != null">txn_status = #{txnStatus},</if>
+			<if test="settleRefId != null">settle_ref_id = #{settleRefId},</if>
+			<if test="payRefId != null">pay_ref_id = #{payRefId},</if>
+			<if test="ownerId != null">owner_id = #{ownerId},</if>
+			<if test="productClassifier != null">product_classifier = #{productClassifier},</if>
+			<if test="terminalId != null">terminal_id = #{terminalId},</if>
+			<if test="protocolVer != null">protocol_ver = #{protocolVer},</if>
+			<if test="charsetEncoding != null">charset_encoding = #{charsetEncoding},</if>
+			<if test="signMethod != null">sign_method = #{signMethod},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="updateDate != null">update_date = #{updateDate},</if>
+		</set>
+		WHERE txn_id = #{ID}
+	</update>
+
+	<delete id="delete" parameterType="string">
+		DELETE FROM mer_txn WHERE txn_id = #{ID}
+	</delete>
+
+	<select id="retrieveTxnWithinSameDay" resultMap="merTxnMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="merId != null">
+				txn.mer_id = #{merId}
+			</if>
+			<if test="subMerId != null">
+				AND txn.sub_mer_id = #{subMerId}
+			</if>
+			<if test="merOrderId != null">
+				AND txn.mer_order_id = #{merOrderId}
+			</if>
+			<if test="date != null">
+				AND DATE_FORMAT(txn.mer_order_date, '%Y-%m-%d') = DATE_FORMAT(#{date}, '%Y-%m-%d')
+			</if>
+		</where>
+	</select>
+	
+</mapper>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.infra.ClearingSummaryMapper">
+
+	<resultMap type="ClearingSummaryEntity" id="clearingSummaryMap">
+		<id property="ID" column="clearing_summary_id"/>
+		<result property="scheduleBatchID" column="schedule_batch_id"/>
+		<result column="clearing_date" property="clearingDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result property="merchantID" column="mer_id"/>
+		<result property="merSubID" column="mer_sub_id"/>
+		<result property="clearingCurrency" column="clearing_currency"/>
+		<result property="exchangeRate" column="exchange_rate"/>
+		<result property="incomeAmount" column="income_amount"/>
+		<result property="opAmount" column="op_amount"/>
+		<result property="depositAmount" column="deposit_amount"/>
+		<result property="balanceAmount" column="balance_amount"/>
+		<result property="comments" column="comments"/>
+		<result column="clear_sum_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="clear_sum_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+	<insert id="insert" parameterType="ClearingSummaryEntity">
+	INSERT INTO clearing_summary
+	(clearing_summary_id, schedule_batch_id, clearing_date, mer_id, mer_sub_id, clearing_currency, 
+	exchange_rate, income_amount, op_amount, deposit_amount, balance_amount, comments, create_date, update_date)
+	VALUES (#{ID}, #{scheduleBatchID}, #{clearingDate}, #{merchantID}, #{merSubID}, #{clearingCurrency}, #{exchangeRate},
+	 #{incomeAmount}, #{opAmount}, #{depositAmount}, #{balanceAmount}, #{comments}, #{createDate}, #{updateDate})
+	</insert>
+	<delete id="delete" parameterType="string">
+		DELETE FROM clearing_summary WHERE clearing_summary_id = #{ID}
+	</delete>
+	<sql id="defaultSelect">
+		SELECT clearing_summary_id, schedule_batch_id, clearing_date, mer_id, mer_sub_id, clearing_currency, 
+		exchange_rate, income_amount, op_amount, deposit_amount, balance_amount, comments, create_date clear_sum_cr_dt, update_date clear_sum_up_dt
+		FROM clearing_summary
+	</sql>
+	<select id="selectOne" parameterType="string" resultMap="clearingSummaryMap">
+		<include refid="defaultSelect"/>
+		WHERE clearing_summary_id = #{ID}
+	</select>
+	<select id="selectBy" resultMap="clearingSummaryMap">
+		<include refid="defaultSelect"/>
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					clearing_summary_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	<select id="selectAll" resultMap="clearingSummaryMap">
+		<include refid="defaultSelect"/>
+	</select>
+	<sql id="defaultCount">
+		SELECT count(*) FROM clearing_summary
+	</sql>
+	<select id="countBy" resultType="int">
+		<include refid="defaultCount"/>
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					clearing_summary_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount"/>
+	</select>
+	<update id="update" parameterType="ClearingSummaryEntity">
+		UPDATE clearing_summary
+		<set>
+			<if test="scheduleBatchID != null">schedule_batch_id = #{scheduleBatchID},</if>
+			<if test="clearingDate != null">clearing_date = #{clearingDate},</if>
+			<if test="merchantID != null">mer_id = #{merchantID},</if>
+			<if test="merSubID != null">mer_sub_id = #{merSubID},</if>
+			<if test="clearingCurrency != null">clearing_currency = #{clearingCurrency},</if>
+			<if test="exchangeRate != null">exchange_rate = #{exchangeRate},</if>
+			<if test="incomeAmount != null">income_amount = #{incomeAmount},</if>
+			<if test="opAmount != null">op_amount = #{opAmount},</if>
+			<if test="depositAmount != null">deposit_amount = #{depositAmount},</if>
+			<if test="balanceAmount != null">balance_amount = #{balanceAmount},</if>
+			<if test="comments != null">comments = #{comments},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="updateDate != null">update_date = #{updateDate},</if>
+		</set>
+		WHERE clearing_summary_id = #{ID}
+	</update>
+</mapper>

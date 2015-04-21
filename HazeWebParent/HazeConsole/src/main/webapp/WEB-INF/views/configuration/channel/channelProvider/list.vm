@@ -1,0 +1,61 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>九盈管理系统</title>
+</head>
+
+<body>
+<table width="99%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td width="10">&nbsp;</td>
+		<td height="30"><strong class="t14">-通道供应列表</strong></td>
+	</tr>
+</table>
+<table width="99%" border="0" align="center" cellpadding="0" cellspacing="0" class="tableList">
+<tr>
+		<th width="15" align="left">&nbsp;</th>
+		<th width="30" align="left">序号</th>
+		<th width="60" height="26" align="left"><strong>名称</strong></th>
+		<th width="60" height="26" align="left"><strong>交易币种</strong></th>
+		<th width="100" height="26" align="left"><strong>结算币种</strong></th>
+		<th width="100" height="26" align="left"><strong>卡组织</strong></th>
+		<th width="60" align="left"><strong>创建时间</strong></th>
+		<th width="60" align="left"><strong>操作</strong></th>
+	</tr>
+#if(${pagination})
+	#foreach($!{obj} in $!{pagination.pageData})
+	<tr onMouseOver="this.style.backgroundColor='#E3F1FD'" onMouseOut="this.style.backgroundColor='#FFFFFF'">
+		<td>&nbsp;</td>
+		<td>$!{velocityCount}</td>
+		<td height="26">$!{obj.providerName}</td>
+		<td>$!{obj.transactionCurrencies}</td>
+		<td>
+			$!{obj.settlementCurrencies}
+		</td>
+		<td>
+			$!{obj.cardOrgs}
+		</td>
+		<td>$dateUtils.formatDate($!{obj.createDate},"yyyy-MM-dd HH:mm")</td>
+		
+		<td>
+			<a href="$!rc.contextPath/channelProvider/edit/$!{obj.ID}">查看</a>
+			<a href="$!rc.contextPath/channelProvider/delete/$!{obj.ID}">删除</a>
+		</td>
+	</tr>	
+	#end
+    <tr>
+	<td colspan="7" style="text-align:right">
+		#page(${pagination}, "$!rc.contextPath/channelProvider/list?page=@pagenum")
+	</td>
+	</tr>
+	
+#else
+	<tr bgcolor="#FFFDD7" align="center">
+        <td colspan="10" height="40">
+			<strong class="t14">没有搜索到符合结果。</strong>
+		</td>
+    </tr>
+#end	
+</table>
+</body>
+</html>

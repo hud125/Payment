@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->
+    <!-- BEGIN HEAD -->
+    <head>
+        <meta charset="utf-8" />
+        <title>Aurfy-Home</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        #parse("common.vm")
+    </head>
+    <!-- END HEAD -->
+    <!-- BEGIN BODY -->
+    <body class="page-header-fixed">
+        <!-- BEGIN HEADER -->
+        #parse("top.vm")
+        <!-- END HEADER -->
+        <!-- BEGIN CONTAINER -->
+        <div class="page-container row-fluid">
+            <!-- BEGIN SIDEBAR -->
+            <input type="hidden" id="liId" value="01" >
+                #parse("left.vm")
+                <!-- END SIDEBAR -->
+                <!-- BEGIN PAGE -->
+                <div class="page-content">
+                    <!-- BEGIN PAGE CONTAINER-->        
+                    <div class="container-fluid">
+                        <!-- BEGIN PAGE HEADER-->
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+                                <ul class="breadcrumb">
+                                    <li>
+                                        <i class="icon-home"></i>
+                                        <a href="index.html">#springMessage("screen.message.lable.tip")</a>
+                                        <i class="icon-angle-right"></i>
+                                    </li>
+                                </ul>
+                                <!-- END PAGE TITLE & BREADCRUMB-->
+                            </div>
+                        </div>
+                        <!-- END PAGE HEADER-->
+                        <!-- BEGIN PAGE CONTENT-->
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                                <div class="alert alert-block alert-success fade in">
+                                    <button data-dismiss="alert" class="close" type="button"></button>
+                                    <h4 class="alert-heading">${map.message}</h4>
+                                    <script>
+            						var time= 2;						
+            						var sTarget = '${map.target}';
+            						var timer =	setInterval(function(){
+            							if (time > 0)
+            							{
+            								document.getElementById("timeGap").innerHTML = '<font color="red">'+time+'</font>' ;														
+            							}
+            							else 
+            							{
+            								if(sTarget == '_parent')
+            								{
+            									parent.location.href='${map.refererURL}';
+            									clearInterval(timer);
+            								}
+            								else
+            								{
+            									 parent.content.location.href='$rc.contextPath'+'${map.refererURL}';
+            									clearInterval(timer);
+            								}
+            							}
+            							time--;
+            						}, 1000);
+									</script>
+                                    <p>
+										<span id="timeGap"><font color="red">2</font></span>秒后返回 ， 如果没有浏览器自动跳转，请点此<a href="$!{rc.contextPath}${map.refererURL}">&nbsp;<font color=red>返回</font></a>。
+										</span>
+									</p>
+                                </div>
+                                <!-- END EXAMPLE TABLE PORTLET-->
+                            </div>
+                        </div>
+                        <!-- END PAGE CONTENT -->
+                    </div>
+                    <!-- END PAGE CONTAINER-->
+                </div>
+                <!-- END PAGE -->
+</div>
+<!-- END CONTAINER -->
+<!-- BEGIN FOOTER -->
+#parse("bottom.vm")
+<!-- END FOOTER -->
+</body>
+<!-- END BODY -->
+</html>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.perm.PermRoleMapper">
+
+	<!-- result maps -->
+	<resultMap id="permRoleMap" type="PermRoleEntity">
+		<id column="role_id" property="ID" />
+		<result column="role_name" property="name" />
+		<result column="role_comments" property="comments" />
+		<result column="role_cr_date" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="role_up_date" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+
+	<insert id="insert" parameterType="PermRoleEntity" >
+		INSERT INTO p_role 
+		(role_id, role_name, comments, create_date, update_date)
+		VALUES 
+		(#{ID}, #{name}, #{comments}, #{createDate}, #{updateDate})
+	</insert>
+
+	<sql id="defaultSelect">
+		SELECT role.role_id, role.role_name, role.comments role_comments, 
+			role.create_date role_cr_date, role.update_date role_up_date
+		FROM p_role role 
+	</sql>
+
+	<select id="selectOne" parameterType="string" resultMap="permRoleMap">
+		<include refid="defaultSelect"/>
+		WHERE role.role_id = #{ID}
+	</select>
+
+	<select id="selectBy" resultMap="permRoleMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.ID != null">
+					role.role_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.name != null">
+					AND role.role_name = #{filterEntity.name}
+				</if>
+				<if test="filterEntity.createDate != null">
+					AND role.create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate != null">
+					AND role.update_date = #{filterEntity.updateDate}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+
+	<select id="selectAll" resultMap="permRoleMap">
+		<include refid="defaultSelect"/>
+	</select>
+	
+	<sql id="defaultCount">
+		SELECT count(*) FROM p_role role 
+	</sql>
+	
+	<select id="countBy" parameterType="RowScopeEntity" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.name != null">
+					role.role_name = #{filterEntity.name}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+	
+	<update id="update" parameterType="PermRoleEntity" >
+		update p_role 
+	    <set>
+	      <if test="name != null">role_name = #{name},</if>
+	      <if test="comments != null">comments = #{comments},</if>
+	      <if test="createDate != null">create_date = #{createDate},</if>
+	      <if test="updateDate != null">update_date = #{updateDate},</if>
+	    </set>
+		where role_id = #{ID}
+	</update>
+
+	<delete id="delete" parameterType="string" >
+		delete from p_role where role_id = #{ID}
+	</delete>
+
+</mapper>

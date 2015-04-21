@@ -1,0 +1,48 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>九盈管理系统</title>
+</head>
+
+<body>
+<table width="99%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td width="10">&nbsp;</td>
+		<td height="30"><strong class="t14">编辑收单机构</strong></td>
+	</tr>
+</table>
+#springBind("acquirer.ID")
+<form id="cityform" name="form1" method="post" #if(!$!status.value) action="$!{rc.contextPath}/acquirer/save" #else action="$!{rc.contextPath}/acquirer/update" #end >
+
+	<table width="99%" border="0" align="center" cellpadding="0" cellspacing="0" class="tableAdd borTop">
+		
+		#if($!status.value) <input type="hidden" name="$!status.expression" value="$!status.value"/> #end
+		
+		#springBind("acquirer.acquirerName")
+		<tr>
+			<th width="14%" height="30" nowrap>收单机构名称<span style="color:#FF0000">*</span></th>
+			<td class="pl5">
+				<input name="$!status.expression" value="$!status.value" size="20" >
+				<span >$status.errorMessage</span>
+			</td>
+		</tr>
+		#springBind("acquirer.comments")
+		<tr>
+			<th height="30">备注</th>
+			<td class="pl5">
+                <textarea name="$!status.expression" >$!status.value</textarea><span >$status.errorMessage</span>
+			</td>
+		</tr>
+		
+		<tr>
+			<th height="35">&nbsp;</th>
+			<td class="pl5">
+				<input type="submit" class="buttonBg" value="保存" />
+				<input type="button" class="buttonBg" value="取消返回" onClick="history.go(-1)" />
+			</td>
+		</tr>
+	</table>
+	<br>
+</form>
+</body>
+</html>

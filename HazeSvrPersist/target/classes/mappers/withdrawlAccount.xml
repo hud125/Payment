@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.conf.WithdrawlAccountMapper">
+	<!-- result maps -->
+	<resultMap id="withdrawlAccountMap" type="WithdrawlAccountEntity">
+		<id column="withdrawl_account_id" property="ID" />
+		<result column="sum_withdrawl_amount" property="sumWithdrawlAmount" />
+		<result column="withdrawl_currency" property="withdrawlCurrency" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP"
+			javaType="Date" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP"
+			javaType="Date" />
+	</resultMap>
+
+	<insert id="insert" parameterType="WithdrawlAccountEntity">
+		INSERT INTO withdrawl_account
+		(withdrawl_account_id , sum_withdrawl_amount,
+		withdrawl_currency,create_date, update_date)
+		VALUES
+		(#{ID},
+		#{sumWithdrawlAmount}, #{withdrawlCurrency}, #{createDate},
+		#{updateDate})
+	</insert>
+
+	<sql id="defaultSelect">
+		SELECT
+		wa.withdrawl_account_id, wa.sum_withdrawl_amount, wa.withdrawl_currency,
+		wa.create_date, wa.update_date
+		FROM withdrawl_account wa
+	</sql>
+	<select id="selectOne" parameterType="string" resultMap="withdrawlAccountMap">
+		<include refid="defaultSelect" />
+		WHERE wa.withdrawl_account_id = #{ID}
+	</select>
+
+    <select id="selectBy" resultMap="withdrawlAccountMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					withdrawl_account_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.sumWithdrawlAmount!=null">
+					AND sum_withdrawl_amount like "%"#{filterEntity.sumWithdrawlAmount}"%"
+				</if>
+				<if test="filterEntity.withdrawlCurrency!=null">
+					AND withdrawl_currency = #{filterEntity.withdrawlCurrency}
+				</if>
+				<if test="filterEntity.createDate !=null">
+					AND create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate !=null">
+					AND update_date = #{filterEntity.updateDate}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+
+    <select id="selectAll" resultMap="withdrawlAccountMap">
+		<include refid="defaultSelect" />
+	</select>
+
+
+	<sql id="defaultCount">
+		SELECT count(*) FROM withdrawl_account
+	</sql>
+	
+	<select id="countBy" parameterType="WithdrawlAccountEntity" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					withdrawl_account_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.withdrawlCurrency!=null">
+					AND withdrawl_currency = #{filterEntity.withdrawlCurrency}
+				</if>
+				<if test="filterEntity.createDate !=null">
+					AND create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate !=null">
+					AND update_date = #{filterEntity.updateDate}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+
+    <update id="update" parameterType="WithdrawlAccountEntity">
+		UPDATE withdrawl_account
+		<set>
+			<if test="sumWithdrawlAmount != null">sum_withdrawl_amount = #{sumWithdrawlAmount},</if>
+			<if test="withdrawlCurrency != null"> withdrawl_currency = #{withdrawlCurrency},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="createDate != null">update_date = #{updateDate},</if>
+		</set>
+		WHERE withdrawl_account_id = #{ID}
+	</update>
+
+	<delete id="delete" parameterType="string">
+		DELETE FROM withdrawl_account WHERE withdrawl_account_id = #{ID}
+	</delete>
+
+</mapper>

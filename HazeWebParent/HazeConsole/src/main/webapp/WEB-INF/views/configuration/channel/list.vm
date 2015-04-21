@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->
+    <!-- BEGIN HEAD -->
+    <head>
+        <meta charset="utf-8" />
+        <title>index</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        #parse("common.vm")
+    </head>
+    <!-- END HEAD -->
+    <!-- BEGIN BODY -->
+    <body class="page-header-fixed">
+        <!-- BEGIN HEADER -->
+        #parse("top.vm")
+        <!-- END HEADER -->
+        <!-- BEGIN CONTAINER -->
+        <div class="page-container row-fluid">
+            <!-- BEGIN SIDEBAR -->
+            <input type="hidden" id="liId" value="0201" >
+                #parse("left.vm")
+                <!-- END SIDEBAR -->
+                <!-- BEGIN PAGE -->
+                <div class="page-content">
+                    <!-- BEGIN PAGE CONTAINER-->        
+                    <div class="container-fluid">
+                        <!-- BEGIN PAGE HEADER-->
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+                                <ul class="breadcrumb">
+                                    <li>
+                                        <i class="icon-home"></i>
+                                        <a href="javascript:void(0)">#springMessage("screen.left.channel")</a>
+                                        <i class="icon-angle-right"></i>
+                                    </li>
+                                    <li>
+                                        <a href="#">#springMessage("screen.left.channel.channel")</a>
+                                    </li>
+                                </ul>
+                                <!-- END PAGE TITLE & BREADCRUMB-->
+                            </div>
+                        </div>
+                        <!-- END PAGE HEADER-->
+                        <!-- BEGIN PAGE CONTENT-->
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                                <div class="portlet box blue">
+                                    <div class="portlet-title">
+                                        <div class="caption">
+                                            <i class="icon-edit"></i>
+                                            Channel List</div>
+                                            <div class="tools">
+                                                <a href="javascript:;" class="collapse"></a>
+                                                <a href="#portlet-config" data-toggle="modal" class="config"></a>
+                                                <a href="javascript:;" class="reload"></a>
+                                                <a href="javascript:;" class="remove"></a>
+                                            </div>
+                                    </div>
+                                    <div class="portlet-body">
+                                        <div class="clearfix">
+                                            <div class="btn-group">
+                                                <button id="sample_editable_1_new" class="btn green" onclick="location='$!rc.contextPath/channel/add'">
+                                                    Add New <i class="icon-plus"></i>
+                                                </button>
+                                            </div>
+                                            <div class="btn-group pull-right">
+                                                <button class="btn dropdown-toggle" data-toggle="dropdown">Tools <i class="icon-angle-down"></i>
+                                                </button>
+                                                <ul class="dropdown-menu pull-right">
+                                                    <li>
+                                                        <a href="#">Print</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Save as PDF</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Export to Excel</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <table class="table table-striped table-hover table-bordered" id="sample_editable_1">
+                                            <thead>
+                                                <tr>
+                                                    <th>Number</th>
+                                                    <th>Acquirer Name</th>
+                                                    <th>Provider Name</th>
+                                                    <th>Transaction Currency</th>
+                                                    <th>Settle Currency</th>
+                                                    <th>Card Org.</th>
+                                                    <th>Status</th>
+                                                    <th>Due Time</th>
+                                                    <th>Create Time</th>
+                                                    <th>Options</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                #foreach($!{obj} in $!{pagination.pageData})
+                                                    <tr class="">
+                                                        <td>$!{velocityCount}</td>
+                                                        <td height="26">$!{obj.acquirerName}</td>
+                                                        <td height="26">$!{obj.channelProviderName}</td>
+                                                        <td>$!{obj.transactionCurrency}</td>
+                                                        <td>$!{obj.settlementCurrency}</td>
+                                                        <td>$!{obj.cardOrg}</td>
+                                                        <td>$!{obj.status}</td>
+                                                        <td>$!dateUtils.formatDate($!{obj.dueDate},"yyyy-MM-dd HH:mm")</td>
+                                                        <td>$!dateUtils.formatDate($!{obj.createDate},"yyyy-MM-dd HH:mm")</td>
+                                                        <td>
+                                                            <a href="$!rc.contextPath/channelProvider/edit/$!{obj.ID}">edit</a>
+                                                            <a href="$!rc.contextPath/channelProvider/delete/$!{obj.ID}">delete</a>
+                                                        </td>
+                                                    </tr>
+                                                #end						
+                                            </tbody>
+                                        </table>
+                                        #page(${pagination}, "$!rc.contextPath/channelProvider/list?page=@pagenum")
+                                    </div>
+                                </div>
+                                <!-- END EXAMPLE TABLE PORTLET-->
+                            </div>
+                        </div>
+                        <!-- END PAGE CONTENT -->
+                    </div>
+                    <!-- END PAGE CONTAINER-->
+                </div>
+                <!-- END PAGE -->
+</div>
+<!-- END CONTAINER -->
+<!-- BEGIN FOOTER -->
+#parse("bottom.vm")
+<!-- END FOOTER -->
+</body>
+<!-- END BODY -->
+</html>

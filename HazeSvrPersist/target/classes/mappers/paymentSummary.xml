@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.payment.PaymentSummaryMapper">
+
+	<resultMap id="paymentSummaryMap" type="PaymentSummaryEntity">
+		<id column="pay_summary_id" property="ID" />
+		<result column="src_app_type" property="srcPayOrder.srcAppType" />
+		<result column="src_ref_id" property="srcPayOrder.srcRefId" />
+		<result column="src_txn_id" property="srcPayOrder.srcTxnId" />
+		<result column="src_txn_type" property="srcPayOrder.srcTxnType" />
+		<result column="src_order_id" property="srcPayOrder.srcOrderId" />
+		<result column="src_txn_date" property="srcPayOrder.srcTxnDate" />
+		<result column="src_txn_day" property="srcPayOrder.srcTxnDay" />
+		<result column="src_currency" property="srcPayOrder.srcCurrency" />
+		<result column="src_amount" property="srcPayOrder.srcAmount" />
+		<result column="op_rate_classifier" property="opRateClassifier" />
+		<result column="op_amount" property="opAmount" />
+		<result column="op_currency" property="opCurrency" />
+		<result column="bank_amount" property="bankAmount" />
+		<result column="bank_currency" property="bankCurrency" />
+		<result column="issue_bank" property="issueBank" />
+		<result column="card_org" property="payCredential.cardOrg" />
+		<result column="encrypted_card_no" property="payCredential.encryptedCardNo" />
+		<result column="mask_card_no" property="payCredential.maskCardNo" />
+		<result column="is_3d" property="is3d" />
+		<result column="is_dcc" property="isDcc" />
+		<result column="ref_flow_id" property="refFlowId" />
+		<result column="complete_date" property="completeDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="exchange_rate" property="exchangeRate" />
+		<result column="remain_amount" property="remainAmount" />
+		<result column="remain_currency" property="remainCurrency" />
+		<result column="ref_summary_id" property="refSummaryId" />
+		<result column="status" property="status" />
+		<result column="delivery_approval_id" property="deliveryApprovalId" />
+		<result column="delivery_date" property="deliveryDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="ps_owner_id" property="ownerId" />
+		<result column="ps_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="ps_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+	
+	<insert id="insert" parameterType="PaymentSummaryEntity" >
+		INSERT INTO payment_summary 
+		(pay_summary_id, 
+		 src_app_type, src_ref_id, src_txn_id, 
+		 src_txn_type, src_order_id, src_txn_date, 
+		 src_txn_day, src_currency, src_amount, 
+		 op_rate_classifier, op_amount, op_currency, 
+		 bank_amount, bank_currency, issue_bank, 
+		 card_org, encrypted_card_no, mask_card_no, 
+		 is_3d, is_dcc, ref_flow_id, 
+		 complete_date, exchange_rate, remain_amount, 
+		 remain_currency, ref_summary_id, status, 
+		 delivery_approval_id, delivery_date, owner_id, 
+		 create_date, update_date)
+		VALUES 
+		(#{ID}, 
+		 #{srcPayOrder.srcAppType}, #{srcPayOrder.srcRefId}, #{srcPayOrder.srcTxnId}, 
+		 #{srcPayOrder.srcTxnType}, #{srcPayOrder.srcOrderId}, #{srcPayOrder.srcTxnDate}, 
+		 #{srcPayOrder.srcTxnDay}, #{srcPayOrder.srcCurrency}, #{srcPayOrder.srcAmount}, 
+		 #{opRateClassifier}, #{opAmount}, #{opCurrency}, 
+		 #{bankAmount}, #{bankCurrency}, #{issueBank}, 
+		 #{payCredential.cardOrg}, #{payCredential.encryptedCardNo}, #{payCredential.maskCardNo}, 
+		 #{is3d}, #{isDcc}, #{refFlowId}, 
+		 #{completeDate}, #{exchangeRate}, #{remainAmount}, 
+		 #{remainCurrency}, #{refSummaryId}, #{status}, 
+		 #{deliveryApprovalId}, #{deliveryDate}, #{ownerId}, 
+		 #{createDate}, #{updateDate}) 
+	</insert>
+
+	<sql id="defaultSelect">
+	SELECT  
+		 ps.pay_summary_id, 
+		 ps.src_app_type, ps.src_ref_id, ps.src_txn_id, ps.src_txn_type, 
+		 ps.src_order_id, ps.src_txn_date, ps.src_txn_day, 
+		 ps.src_currency, ps.src_amount, ps.op_rate_classifier, 
+		 ps.op_amount, ps.op_currency, ps.bank_amount, ps.bank_currency, ps.issue_bank, 
+		 ps.card_org, ps.encrypted_card_no, ps.mask_card_no, ps.is_3d, ps.is_dcc,
+		 ps.ref_flow_id, complete_date, ps.exchange_rate, ps.remain_amount, ps.remain_currency, 
+		 ps.ref_summary_id, ps.status, ps.delivery_approval_id, ps.delivery_date, ps.owner_id ps_owner_id, 
+		 ps.create_date ps_cr_dt, ps.update_date ps_up_dt
+	FROM payment_summary ps 
+	</sql>
+	
+	<select id="selectOne" parameterType="string" resultMap="paymentSummaryMap">
+		<include refid="defaultSelect"/>
+		 WHERE ps.pay_summary_id = #{ID}
+	</select>
+	
+	<!-- need update -->
+	<select id="selectBy" resultMap="paymentSummaryMap">
+		<include refid="defaultSelect"/>
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.ID != null">
+					ps.pay_summary_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.srcPayOrder != null">
+					<if test="filterEntity.srcPayOrder.srcOrderId != null">
+						and ps.src_order_id = #{filterEntity.srcPayOrder.srcOrderId}
+					</if>
+				</if>
+			</if>
+		</where>
+		<if test="startIndex >= 0 and fetchRows > 0">
+			LIMIT #{startIndex}, #{fetchRows}
+		</if>
+	</select>
+	
+	<select id="selectAll" resultMap="paymentSummaryMap">
+		<include refid="defaultSelect" />
+	</select>
+	
+	<sql id="defaultCount">
+		SELECT count(*) FROM payment_summary ps 
+	</sql>
+	
+	<!-- need update -->
+	<select id="countBy" parameterType="string" resultType="int">
+		<include refid="defaultCount"/>
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					ps.pay_summary_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+	
+	<update id="update" parameterType="PaymentSummaryEntity" >
+		update payment_summary 
+	    <set>
+			<if test="srcPayOrder != null">
+	      		<if test="srcPayOrder.srcAppType != null">src_app_type = #{srcPayOrder.srcAppType},</if>
+	      		<if test="srcPayOrder.srcRefId != null">src_ref_id = #{srcPayOrder.srcRefId},</if>
+			    <if test="srcPayOrder.srcTxnId != null">src_txn_id = #{srcPayOrder.srcTxnId},</if>
+			    <if test="srcPayOrder.srcTxnType != null">src_txn_type = #{srcPayOrder.srcTxnType},</if>
+			    <if test="srcPayOrder.srcOrderId != null">src_order_id = #{srcPayOrder.srcOrderId},</if>
+			    <if test="srcPayOrder.srcTxnDate != null">src_txn_date = #{srcPayOrder.srcTxnDate},</if>
+			    <if test="srcPayOrder.srcTxnDay != null">src_txn_day = #{srcPayOrder.srcTxnDay},</if>
+	      		<if test="srcPayOrder.srcCurrency != null">src_currency = #{srcPayOrder.srcCurrency},</if>
+			    <if test="srcPayOrder.srcAmount != null">src_amount = #{srcPayOrder.srcAmount},</if>
+	     	</if>
+			<if test="opRateClassifier != null">op_rate_classifier = #{opRateClassifier},</if>
+			<if test="opAmount != null">op_amount = #{opAmount},</if>
+			<if test="opCurrency != null">op_currency = #{opCurrency},</if>
+			<if test="bankAmount != null">bank_amount = #{bankAmount},</if>
+			<if test="bankCurrency != null">bank_currency = #{bankCurrency},</if>
+			<if test="issueBank != null">issue_bank = #{issueBank},</if>
+			<if test="payCredential != null">
+				<if test="payCredential.cardOrg != null">card_org = #{payCredential.cardOrg},</if>
+				<if test="payCredential.encryptedCardNo != null">encrypted_card_no = #{payCredential.encryptedCardNo},</if>
+				<if test="payCredential.maskCardNo != null">mask_card_no = #{payCredential.maskCardNo},</if>
+			</if>
+			<if test="is3d != null">is_3d = #{is3d},</if>
+			<if test="isDcc != null">is_dcc = #{isDcc},</if>
+			<if test="refFlowId != null">ref_flow_id = #{refFlowId},</if>
+			<if test="completeDate != null">complete_date = #{completeDate},</if>
+			<if test="exchangeRate != null">exchange_rate = #{exchangeRate},</if>
+			<if test="remainAmount != null">remain_amount = #{remainAmount},</if>
+			<if test="remainCurrency != null">remain_currency = #{remainCurrency},</if>
+			<if test="refSummaryId != null">ref_summary_id = #{refSummaryId},</if>
+			<if test="status != null">status = #{status},</if>
+			<if test="deliveryApprovalId != null">delivery_approval_id = #{deliveryApprovalId},</if>
+			<if test="deliveryDate != null">delivery_date = #{deliveryDate},</if>
+			<if test="ownerId != null">owner_id = #{ownerId},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="updateDate != null">update_date = #{updateDate},</if>
+	    </set>
+		where pay_summary_id = #{ID}
+	</update>
+
+	<delete id="delete" parameterType="string" >
+		DELETE FROM payment_summary WHERE pay_summary_id = #{ID}
+	</delete>
+
+</mapper>

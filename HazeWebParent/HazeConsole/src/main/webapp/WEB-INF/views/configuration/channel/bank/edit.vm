@@ -1,0 +1,68 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>九盈管理系统</title>
+</head>
+
+<body>
+<table width="99%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td width="10">&nbsp;</td>
+		<td height="30"><strong class="t14">编辑银行</strong></td>
+	</tr>
+</table>
+<form id="cityform" name="form1" method="post" action="$!{rc.contextPath}/bank/update">
+	<input type="hidden" value="$!bank.ID" name="ID"/>
+	<table width="99%" border="0" align="center" cellpadding="0" cellspacing="0" class="tableAdd borTop">
+		
+		<tr>
+			<th width="14%" height="30" nowrap>银行编号<span style="color:#FF0000">*</span></th>
+			<td class="pl5">
+				<INPUT  name="bankCode" size="20" value="$!bank.bankCode" >
+			</td>
+		</tr>		
+		<tr>
+			<th width="14%" height="30" nowrap>银行缩写</th>
+			<td class="pl5">
+				<INPUT  name="bankAbbreviation" size="20" value="$!bank.bankAbbreviation" >
+			</td>
+		</tr>
+		<tr>
+			<th height="30">银行名称</th>
+			<td class="pl5">
+				<INPUT  name="bankName" size="20" value="$!bank.bankName" >
+			</td>
+		</tr>
+		<tr>
+			<th height="30">银行分支</th>
+			<td class="pl5">
+				<INPUT  name="bankBranch" size="20" value="$!bank.bankBranch" >
+				
+			</td>
+		</tr>
+		<tr>
+			<th height="30">银行网址</th>
+			<td class="pl5">
+				<INPUT  name="bankURL" size="20" value="$!bank.bankURL" >
+				
+			</td>
+		</tr>
+		<tr>
+			<th height="30">备注</th>
+			<td class="pl5">
+                <textarea name="comments">$!bank.comments</textarea>
+			</td>
+		</tr>
+		
+		<tr>
+			<th height="35">&nbsp;</th>
+			<td class="pl5">
+				<input type="submit" class="buttonBg" value="保存修改" />
+				<input type="button" class="buttonBg" value="取消返回" onClick="history.go(-1)" />
+			</td>
+		</tr>
+	</table>
+	<br>
+</form>
+</body>
+</html>

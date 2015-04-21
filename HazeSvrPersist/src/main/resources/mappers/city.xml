@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.infra.CityMapper">
+
+	<!-- result maps -->
+	<resultMap id="cityMap" type="CityEntity">
+		<id column="city_id" property="ID" />
+		<result column="city_name" property="name" />
+		<result column="city_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="city_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<!-- 
+		<association column="country_id" property="country" javaType="CountryEntity" select="com.aurfy.haze.dao.CountryMapper.selectCountry" />
+		<association column="state_id" property="state" javaType="StateProvEntity" select="com.aurfy.haze.dao.StateProvMapper.selectStateProv" />
+		 -->
+		<association property="country" javaType="CountryEntity" resultMap="com.aurfy.haze.dao.infra.CountryMapper.countryMap" />
+		<association property="state" javaType="StateProvEntity" resultMap="com.aurfy.haze.dao.infra.StateProvMapper.stateProvMap" />
+	</resultMap>
+	
+	<insert id="insert" parameterType="CityEntity" >
+		INSERT INTO city (city_id, city_name, country_id, state_id, create_date, update_date)
+		VALUES (#{ID}, #{name}, #{country.ID}, #{state.ID}, #{createDate}, #{updateDate})
+	</insert>
+	
+	<sql id="defaultSelect">
+		SELECT ci.city_id, ci.city_name, ci.create_date city_cr_dt, ci.update_date city_up_dt,
+			   sp.state_id, sp.state_name, sp.create_date state_cr_dt, sp.update_date state_up_dt,
+			   co.country_id, co.country_name, co.abbrev country_abbrev, 
+			   co.country_code, co.create_date country_cr_dt, co.update_date country_up_dt
+		FROM city ci
+			inner join state_province sp on ci.state_id = sp.state_id
+			inner join country co on ci.country_id = co.country_id
+	</sql>
+
+	<select id="selectOne" parameterType="string" resultMap="cityMap">
+		<include refid="defaultSelect"/>
+		WHERE ci.city_id = #{ID}
+	</select>
+
+	<select id="selectBy" resultMap="cityMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.ID != null">
+					ci.city_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.objectName != null">
+					AND ci.city_name = #{filterEntity.name}
+				</if>
+				<if test="filterEntity.country != null">
+					<if test="filterEntity.country.ID != null">
+						AND ci.country_id = #{filterEntity.country.ID}
+					</if>
+				</if>
+				<if test="filterEntity.state != null">
+					<if test="filterEntity.state.ID != null">
+						AND ci.state_id = #{filterEntity.state.ID}
+					</if>
+				</if>
+				<if test="filterEntity.createDate != null">
+					AND ci.create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate != null">
+					AND ci.update_date = #{filterEntity.updateDate}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+
+	<select id="selectAll" resultMap="cityMap">
+		<include refid="defaultSelect"/>
+		order by ci.city_id
+	</select>
+	
+	<sql id="defaultCount">
+		SELECT count(*) FROM city ci 
+	</sql>
+	
+	<select id="countBy" parameterType="CityEntity" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.objectName != null">
+					ci.city_name = #{filterEntity.name}
+				</if>
+				<if test="filterEntity.country != null">
+					<if test="filterEntity.country.ID != null">
+						AND ci.country_id = #{filterEntity.country.ID}
+					</if>
+				</if>
+				<if test="filterEntity.state != null">
+					<if test="filterEntity.state.ID != null">
+						AND ci.state_id = #{filterEntity.state.ID}
+					</if>
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+
+	<update id="update" parameterType="CityEntity">
+		UPDATE city 
+		<set>
+	      <if test="name != null">city_name = #{name},</if>
+	      <if test="country != null">country_id = #{country.ID},</if>
+	      <if test="state != null">state_id = #{state.ID},</if>
+	      <if test="createDate != null">create_date = #{createDate},</if>
+	      <if test="updateDate != null">update_date = #{updateDate},</if>
+	    </set>
+		WHERE city_id = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="string">
+		DELETE FROM city WHERE city_id = #{ID}
+	</delete>
+
+</mapper>

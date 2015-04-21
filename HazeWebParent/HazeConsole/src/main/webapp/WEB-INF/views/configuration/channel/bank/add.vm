@@ -1,0 +1,72 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>九盈管理系统</title>
+</head>
+
+<body>
+<table width="99%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td width="10">&nbsp;</td>
+		<td height="30"><strong class="t14">创建银行</strong></td>
+	</tr>
+</table>
+<form id="cityform" name="form1" method="post" action="$!{rc.contextPath}/bank/save">
+
+	<table width="99%" border="0" align="center" cellpadding="0" cellspacing="0" class="tableAdd borTop">
+		#springBind("bank.bankCode")
+		<tr>
+			<th width="14%" height="30" nowrap>银行编号<span style="color:#FF0000">*</span></th>
+			<td class="pl5">
+				<INPUT name="bankCode" size="20" >
+				<span >$status.errorMessage</span>
+			</td>
+		</tr>
+		#springBind("bank.bankAbbreviation")
+		<tr>
+			<th width="14%" height="30" nowrap>银行缩写</th>
+			<td class="pl5">
+				<INPUT id="fullName" name="bankAbbreviation" size="60">
+				<span >$status.errorMessage</span>
+			</td>
+		</tr>
+		<tr>
+			<th height="30">银行名称</th>
+			<td class="pl5">
+				<input id="enName" name="bankName" size="60">
+				<span id="enNameDiv" style="display:none"></span>
+			</td>
+		</tr>
+		<tr>
+			<th height="30">银行分支</th>
+			<td class="pl5">
+				<input id="enName" name="bankBranch" size="60">
+				<span id="enNameDiv" style="display:none"></span>
+			</td>
+		</tr>
+		<tr>
+			<th height="30">银行网址</th>
+			<td class="pl5">
+				<input id="enName" name="bankURL" size="60">
+				<span id="enNameDiv" style="display:none"></span>
+			</td>
+		</tr>
+		<tr>
+			<th height="30">备注</th>
+			<td class="pl5">
+                <textarea name="comments"></textarea>
+			</td>
+		</tr>
+		
+		<tr>
+			<th height="35">&nbsp;</th>
+			<td class="pl5">
+				<input type="submit" class="buttonBg" value="创建銀行" />
+				<input type="button" class="buttonBg" value="取消返回" onClick="history.go(-1)" />
+			</td>
+		</tr>
+	</table>
+	<br>
+</form>
+</body>
+</html>

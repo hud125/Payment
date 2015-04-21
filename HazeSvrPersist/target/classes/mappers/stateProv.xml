@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.infra.StateProvMapper">
+
+	<!-- result maps -->
+	<resultMap id="stateProvMap" type="StateProvEntity">
+		<id column="state_id" property="ID" />
+		<result column="state_name" property="name" />
+		<result column="state_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="state_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<!-- 
+		<association column="country_id" property="country" javaType="CountryEntity" select="com.aurfy.haze.dao.CountryMapper.selectCountry" />
+		 -->
+		<association property="country" javaType="CountryEntity" resultMap="com.aurfy.haze.dao.infra.CountryMapper.countryMap" />
+	</resultMap>
+	
+	<insert id="insert" parameterType="StateProvEntity" >
+		INSERT INTO state_province (state_id, state_name, country_id, create_date, update_date)
+		VALUES (#{ID}, #{name}, #{country.ID}, #{createDate}, #{updateDate})
+	</insert>
+	
+	<sql id="defaultSelect">
+		SELECT sp.state_id, sp.state_name, sp.create_date state_cr_dt, sp.update_date state_up_dt,
+			   co.country_id, co.country_name, co.abbrev country_abbrev, 
+			   co.country_code, co.create_date country_cr_dt, co.update_date country_up_dt
+		FROM state_province sp
+			inner join country co on sp.country_id = co.country_id
+	</sql>
+	
+	<!-- get the associated obj, such as country -->
+	<select id="selectOne" parameterType="string" resultMap="stateProvMap">
+		<include refid="defaultSelect"/>
+		WHERE sp.state_id = #{ID}
+	</select>
+
+	<select id="selectBy" resultMap="stateProvMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.ID != null">
+					sp.state_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.name != null">
+					AND sp.state_name = #{filterEntity.name}
+				</if>
+				<if test="filterEntity.country != null">
+					<if test="filterEntity.country.ID != null">
+						AND sp.country_id = #{filterEntity.country.ID}
+					</if>
+				</if>
+				<if test="filterEntity.createDate != null">
+					AND sp.create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate != null">
+					AND sp.update_date = #{filterEntity.updateDate}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+
+	<select id="selectAll" resultMap="stateProvMap">
+		<include refid="defaultSelect"/>
+		order by sp.state_id
+	</select>
+	
+	<sql id="defaultCount">
+		SELECT count(*) FROM state_province sp
+	</sql>
+	
+	<select id="countBy" parameterType="StateProvEntity" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.name != null">
+					sp.state_name = #{filterEntity.name}
+				</if>
+				<if test="filterEntity.country != null">
+					<if test="filterEntity.country.ID != null">
+						AND sp.country_id = #{filterEntity.country.ID}
+					</if>
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+
+	<update id="update" parameterType="StateProvEntity">
+		UPDATE state_province 
+		<set>
+	      <if test="name != null">state_name = #{name},</if>
+	      <if test="country != null">country_id = #{country.ID},</if>
+	      <if test="createDate != null">create_date = #{createDate},</if>
+	      <if test="updateDate != null">update_date = #{updateDate},</if>
+	    </set>
+		WHERE state_id = #{ID}
+	</update>
+
+	<delete id="delete" parameterType="string">
+		DELETE FROM state_province WHERE state_id = #{ID}
+	</delete>
+
+	<select id="listStateProvsByCountry" parameterType="string" resultMap="stateProvMap">
+		<include refid="defaultSelect"/>
+		where sp.country_id = #{country_id}
+		order by sp.state_id
+	</select>
+	
+</mapper>

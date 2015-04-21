@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.conf.ScheduleBatchMapper">
+
+    <resultMap id="scheduleBatchMap" type="ScheduleBatchEntity">
+		<id column="schedule_batch_id" property="ID" />
+		<result column="job_id" property="jobId" />
+		<result column="schedule_date" property="scheduleDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="logs" property="logs" />
+		<result column="sb_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="sb_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+	
+	<insert id="insert" parameterType="ScheduleBatchEntity">
+		INSERT INTO schedule_batch
+		(schedule_batch_id, job_id, schedule_date, logs, create_date,update_date)
+		VALUES
+		(#{ID},
+		#{jobId}, #{scheduleDate}, #{logs}, #{createDate},
+		#{updateDate})
+	</insert>
+	
+	<sql id="defaultSelect">
+		SELECT
+		schedule_batch_id, job_id, schedule_date, logs, create_date sb_cr_dt, update_date sb_up_dt
+		FROM schedule_batch 
+	</sql>
+	<select id="selectOne" parameterType="string" resultMap="scheduleBatchMap">
+		<include refid="defaultSelect" />
+		WHERE schedule_batch_id = #{ID}
+	</select>
+	
+	 <select id="selectBy" resultMap="scheduleBatchMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.jobId !=null">
+					job_id = #{filterEntity.jobId}
+				</if>
+				<if test="filterEntity.scheduleDate!=null">
+					AND schedule_date like "%"#{filterEntity.scheduleDate}"%"
+				</if>
+				<if test="filterEntity.logs!=null">
+					AND logs like "%"#{filterEntity.logs}"%"
+				</if>
+				<if test="filterEntity.createDate !=null">
+					AND create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate !=null">
+					AND update_date = #{filterEntity.updateDate}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	
+	<select id="selectAll" resultMap="scheduleBatchMap">
+		<include refid="defaultSelect" />
+	</select>
+	
+	
+	<sql id="defaultCount">
+		SELECT count(*) FROM schedule_batch
+	</sql>
+	
+	<select id="countBy" parameterType="WithdrawlAccountEntity" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.jobId != null">
+					job_id = #{filterEntity.jobId}
+				</if>
+			</if>
+		</where>
+	</select>
+
+    <select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+	
+	  <update id="update" parameterType="ScheduleBatchEntity">
+		UPDATE schedule_batch
+		<set>
+			<if test="jobId != null">job_id = #{jobId},</if>
+			<if test="scheduleDate != null">schedule_date = #{scheduleDate},</if>
+			<if test="logs != null"> logs = #{logs},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="createDate != null">update_date = #{updateDate},</if>
+		</set>
+		WHERE schedule_batch_id = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="string">
+		DELETE FROM schedule_batch WHERE schedule_batch_id = #{ID}
+	</delete>
+
+</mapper>

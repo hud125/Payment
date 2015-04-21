@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->
+    <!-- BEGIN HEAD -->
+    <head>
+        <meta charset="utf-8" />
+        <title>Metronic | Form Stuff - Form Layouts</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        <!-- BEGIN GLOBAL MANDATORY STYLES -->
+        #parse("common.vm")
+        <link rel="stylesheet" type="text/css" href="$!{rc.contextPath}/skin/css/datetimepicker.css" />
+        <link rel="stylesheet" type="text/css" href="$!{rc.contextPath}/skin/css/datepicker.css" />
+        <link rel="stylesheet" type="text/css" href="$!{rc.contextPath}/skin/css/timepicker.css" />
+        <link rel="stylesheet" type="text/css" href="$!{rc.contextPath}/skin/css/select2_metro.css" />
+        <link rel="stylesheet" type="text/css" href="$!{rc.contextPath}/skin/css/chosen.css" />
+        <!-- END GLOBAL MANDATORY STYLES -->
+    </head>
+    <!-- END HEAD -->
+    <!-- BEGIN BODY -->
+    <body class="page-header-fixed">
+        <!-- BEGIN HEADER -->
+        #parse("top.vm")
+        <!-- END HEADER -->
+        <!-- BEGIN CONTAINER -->
+        <div class="page-container row-fluid">
+            <!-- BEGIN SIDEBAR -->
+            <input type="hidden" id="liId" value="0201" >
+                #parse("left.vm")
+                <!-- END SIDEBAR -->
+                <!-- BEGIN PAGE -->  
+                <div class="page-content">
+                    <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+                    <!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+                    <!-- BEGIN PAGE CONTAINER-->
+                    <div class="container-fluid">
+                        <!-- BEGIN PAGE HEADER-->
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+                                <ul class="breadcrumb">
+                                    <li>
+                                        <i class="icon-home"></i>
+                                        <a href="javascript:void(0)">#springMessage("screen.left.channel")</a>
+                                        <i class="icon-angle-right"></i>
+                                    </li>
+                                    <li>
+                                        <a href="#">#springMessage("screen.left.channel.channel")</a>
+                                    </li>
+                                </ul>
+                                <!-- END PAGE TITLE & BREADCRUMB-->
+                            </div>
+                        </div>
+                        <!-- END PAGE HEADER-->
+                        <!-- BEGIN PAGE CONTENT-->
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <!-- BEGIN VALIDATION STATES-->
+                                <div class="portlet box green">
+                                    <div class="portlet-title">
+                                        <div class="caption">
+                                            <i class="icon-reorder"></i>
+                                            New Channel</div>
+                                            <div class="tools">
+                                                <a href="javascript:;" class="collapse"></a>
+                                                <a href="#portlet-config" data-toggle="modal" class="config"></a>
+                                                <a href="javascript:;" class="reload"></a>
+                                                <a href="javascript:;" class="remove"></a>
+                                            </div>
+                                    </div>
+                                    <div class="portlet-body form">
+                                        <!-- BEGIN FORM-->
+                                        <form action="$!{rc.contextPath}/channel/save" id="form_sample_2" class="form-horizontal" method="POST">
+                                            <div class="alert alert-error hide">
+                                                <button class="close" data-dismiss="alert"></button>
+                                                You have some form errors. Please check below.
+                                            </div>
+                                            <div class="alert alert-success hide">
+                                                <button class="close" data-dismiss="alert"></button>
+                                                Your form validation is successful!
+                                            </div>
+                                            #springBind("channel.acquirerId")
+                                            <div class="control-group">
+                                                <label class="control-label">收单机构<span class="required">*</span>
+                                                </label>
+                                                <div class="controls">
+                                                    <select class="span6 m-wrap" name="$!status.expression" id="acquirer">
+                                                        <option value="" id="acquirerDefault">Select...</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            #springBind("channel.channelProviderId")
+                                            <div class="control-group">
+                                                <label class="control-label">通道供应<span class="required">*</span>
+                                                </label>
+                                                <div class="controls">
+                                                    <select class="span6 m-wrap" name="$!status.expression">
+                                                        <option value="">Select...</option>
+                                                        <option value="01">网银</option>
+                                                        <option value="02">快速支付</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            #springBind("channel.cardOrg")
+                                            <div class="control-group">
+                                                <label class="control-label">卡组织<span class="required">*</span>
+                                                </label>
+                                                <div class="controls">
+                                                    <select class="span6 m-wrap" name="$!status.expression">
+                                                        <option value="">Select...</option>
+                                                        <option value="VISA">VISA</option>
+                                                        <option value="MASTER">MASTER</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            #springBind("channel.transactionCurrency")
+                                            <div class="control-group">
+                                                <label class="control-label">交易币种<span class="required">*</span>
+                                                </label>
+                                                <div class="controls">
+                                                    <select class="span6 m-wrap" name="$!status.expression">
+                                                        <option value="">Select...</option>
+                                                        <option value="USD">美元</option>
+                                                        <option value="CNY">人民币</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            #springBind("channel.settlementCurrency")
+                                            <div class="control-group">
+                                                <label class="control-label">清算币种<span class="required">*</span>
+                                                </label>
+                                                <div class="controls">
+                                                    <select class="span6 m-wrap" name="$!status.expression">
+                                                        <option value="">Select...</option>
+                                                        <option value="USD">美元</option>
+                                                        <option value="CNY">人民币</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            #springBind("channel.dueDate")
+                                            <div class="control-group">
+                                                <label class="control-label">到期时间<span class="required">*</span>
+                                                </label>
+                                                <div class="controls">
+                                                    <input class="m-wrap m-ctrl-medium date-picker" readonly size="16" type="text" value=""  name="$!status.expression"/>
+                                                </div>
+                                            </div>
+                                            #springBind("channel.status")
+                                            <div class="control-group">
+                                                <label class="control-label">状态<span class="required">*</span>
+                                                </label>
+                                                <div class="controls">
+                                                    <label class="radio line">
+                                                        <input type="radio" name="$!status.expression" value="ACTIVE" />
+                                                        激活
+                                                    </label>
+                                                    <label class="radio line">
+                                                        <input type="radio" name="$!status.expression" value="INACTIVE" />
+                                                        禁止
+                                                    </label>
+                                                    <div id="form_2_membership_error"></div>
+                                                </div>
+                                            </div>
+											#springBind("channel.comments")
+                                            <div class="control-group">
+                                                <label class="control-label">备注</label>
+                                                <div class="controls">
+                                                    <textarea class="span6 m-wrap" rows="3" name="$!status.expression"></textarea>
+                                                </div>
+                                            </div>
+											
+											<div class="control-group">
+                                                <label class="control-label" style="font:bold">通道配置<span class="required">*</span>
+                                                </label>
+                                                <div class="controls">
+													<hr>
+                                                </div>
+                                            </div>
+											<div class="control-group">
+                                                <label class="control-label">merId<span class="required">*</span>
+                                                </label>
+                                                <div class="controls">
+													<input type="text" name="merId" data-required="1" class="span6 m-wrap"/>
+                                                </div>
+                                            </div>
+											<div class="control-group">
+                                                <label class="control-label">merCode<span class="required">*</span>
+                                                </label>
+                                                <div class="controls">
+													<input type="text" name="merCode" data-required="1" class="span6 m-wrap"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-actions">
+                                                <button type="submit" class="btn green">Submit</button>
+                                                <button type="button" class="btn">Cancel</button>
+                                            </div>
+                                        </form>
+                                        <!-- END FORM-->
+                                    </div>
+                                </div>
+                                <!-- END VALIDATION STATES-->
+                            </div>
+                        </div>
+                        <!-- END PAGE CONTENT-->         
+                    </div>
+                    <!-- END PAGE CONTAINER-->
+                </div>
+                <!-- END PAGE -->  
+</div>
+<!-- END CONTAINER -->
+<!-- BEGIN FOOTER -->
+#parse("bottom.vm")
+<script type="text/javascript" src="$!{rc.contextPath}/skin/js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="$!{rc.contextPath}/skin/js/select2.min.js"></script>
+<script type="text/javascript" src="$!{rc.contextPath}/skin/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="$!{rc.contextPath}/skin/js/date.js"></script>
+<script type="text/javascript" src="$!{rc.contextPath}/skin/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="$!{rc.contextPath}/skin/js/jquery.inputmask.bundle.min.js"></script>
+<script>
+	
+    var FormValidation = function() {
+	return {
+		// main function to initiate the module
+		init : function() {
+			// for more info visit the official plugin documentation:
+			// http://docs.jquery.com/Plugins/Validation
+			// Sample 2
+			$('#form_2_select2').select2({
+				placeholder : "Select an Option",
+				allowClear : true
+			});
+			var form2 = $('#form_sample_2');
+			var error2 = $('.alert-error', form2);
+			var success2 = $('.alert-success', form2);
+			form2
+					.validate({
+						errorElement : 'span', // default input error message
+												// container
+						errorClass : 'help-inline', // default input error
+													// message class
+						focusInvalid : false, // do not focus the last invalid
+												// input
+						ignore : "",
+						rules : {
+							acquirerId : {
+								required : true
+							},
+							channelProviderId : {
+								required : true
+							},
+							acquirerId : {
+								required : true
+							},
+							cardOrg : {
+								required : true
+							},
+							transactionCurrency : {
+								required : true
+							},
+							settlementCurrency : {
+								required : true
+							},
+							dueDate : {
+								required : true
+							},
+							status : {
+								required : true
+							}
+						},
+						messages : { // custom messages for radio buttons and
+										// checkboxes
+							status : {
+								required : "Please select a status"
+							},
+							service : {
+								required : "Please select  at least 2 types of Service",
+								minlength : jQuery
+										.format("Please select  at least {0} types of Service")
+							}
+						},
+						errorPlacement : function(error, element) { // render
+																	// error
+																	// placement
+																	// for each
+																	// input
+																	// type
+							if (element.attr("name") == "status") { // for
+																				// uniform
+																				// radio
+																				// buttons,
+																				// insert
+																				// the
+																				// after
+																				// the
+																				// given
+																				// container
+								error.addClass("no-left-padding").insertAfter(
+										"#form_2_membership_error");
+							} else {
+								error.insertAfter(element); // for other inputs,
+															// just perform
+															// default behavoir
+							}
+						},
+						invalidHandler : function(event, validator) { // display
+																		// error
+																		// alert
+																		// on
+																		// form
+																		// submit
+							success2.hide();
+							error2.show();
+							App.scrollTo(error2, -200);
+						},
+						highlight : function(element) { // hightlight error
+														// inputs
+							$(element).closest('.help-inline')
+									.removeClass('ok'); // display OK icon
+							$(element).closest('.control-group').removeClass(
+									'success').addClass('error'); // set error
+																	// class to
+																	// the
+																	// control
+																	// group
+						},
+						unhighlight : function(element) { // revert the change
+															// dony by
+															// hightlight
+							$(element).closest('.control-group').removeClass(
+									'error'); // set error class to the
+												// control group
+						},
+						success : function(label) {
+							if (label.attr("for") == "service"
+									|| label.attr("for") == "membership") { // for
+																			// checkboxes
+																			// and
+																			// radip
+																			// buttons,
+																			// no
+																			// need
+																			// to
+																			// show
+																			// OK
+																			// icon
+								label.closest('.control-group').removeClass(
+										'error').addClass('success');
+								label.remove(); // remove error label here
+							} else { // display success icon for other inputs
+								label.addClass('valid').addClass(
+										'help-inline ok') // mark the current
+															// input as valid
+															// and display OK
+															// icon
+								.closest('.control-group').removeClass('error')
+										.addClass('success'); // set success
+																// class to the
+																// control group
+							}
+						},
+						submitHandler : function(form) {
+							success2.show();
+							error2.hide();
+							form2.submit();
+						}
+					});
+			// apply validation on chosen dropdown value change, this only
+			// needed for chosen dropdown integration.
+			$('.chosen, .chosen-with-diselect', form2).change(function() {
+				form2.validate().element($(this)); // revalidate the chosen
+													// dropdown value and show
+													// error or success message
+													// for the input
+			});
+			// apply validation on select2 dropdown value change, this only
+			// needed for chosen dropdown integration.
+			$('.select2', form2).change(function() {
+				form2.validate().element($(this)); // revalidate the chosen
+													// dropdown value and show
+													// error or success message
+													// for the input
+			});
+		}
+	};
+}();
+    var FormComponents = function () {
+    var handleWysihtml5 = function () {
+    if (!jQuery().wysihtml5) {
+    return;
+    }
+    if ($('.wysihtml5').size() > 0) {
+    $('.wysihtml5').wysihtml5({
+    "stylesheets": ["assets/plugins/bootstrap-wysihtml5/wysiwyg-color.css"]
+    });
+    }
+    }
+    var resetWysihtml5 = function () {
+    if (!jQuery().wysihtml5) {
+    return;
+    }
+    if ($('.wysihtml5').size() > 0) {
+    $('.wysihtml5').wysihtml5({
+    "stylesheets": ["assets/plugins/bootstrap-wysihtml5/wysiwyg-color.css"]
+    });
+    }
+    }
+    var handleToggleButtons = function () {
+    if (!jQuery().toggleButtons) {
+    return;
+    }
+    $('.basic-toggle-button').toggleButtons();
+    $('.text-toggle-button').toggleButtons({
+    width: 200,
+    label: {
+    enabled: "Lorem Ipsum",
+    disabled: "Dolor Sit"
+    }
+    });
+    $('.danger-toggle-button').toggleButtons({
+    style: {
+    // Accepted values ["primary", "danger", "info", "success", "warning"] or nothing
+    enabled: "danger",
+    disabled: "info"
+    }
+    });
+    $('.info-toggle-button').toggleButtons({
+    style: {
+    enabled: "info",
+    disabled: ""
+    }
+    });
+    $('.success-toggle-button').toggleButtons({
+    style: {
+    enabled: "success",
+    disabled: "info"
+    }
+    });
+    $('.warning-toggle-button').toggleButtons({
+    style: {
+    enabled: "warning",
+    disabled: "info"
+    }
+    });
+    $('.height-toggle-button').toggleButtons({
+    height: 100,
+    font: {
+    'line-height': '100px',
+    'font-size': '20px',
+    'font-style': 'italic'
+    }
+    });
+    }
+    var handleTagsInput = function () {
+    if (!jQuery().tagsInput) {
+    return;
+    }
+    $('#tags_1').tagsInput({
+    width: 'auto',
+    'onAddTag': function () {
+    //alert(1);
+    },
+    });
+    $('#tags_2').tagsInput({
+    width: 240
+    });
+    }
+    var handlejQueryUIDatePickers = function () {
+    $( ".ui-date-picker" ).datepicker();
+    }
+    var handleDatePickers = function () {
+    if (jQuery().datepicker) {
+    $('.date-picker').datepicker({
+    rtl : App.isRTL()
+    });
+    }
+    }
+    var handleTimePickers = function () {
+    if (jQuery().timepicker) {
+    $('.timepicker-default').timepicker();
+    $('.timepicker-24').timepicker({
+    minuteStep: 1,
+    showSeconds: true,
+    showMeridian: false
+    });
+    }
+    }
+    var handleDateRangePickers = function () {
+    if (!jQuery().daterangepicker) {
+    return;
+    }
+    $('.date-range').daterangepicker(
+    {
+    opens: (App.isRTL() ? 'left' : 'right'),
+    format: 'MM/dd/yyyy',
+    separator: ' to ',
+    startDate: Date.today().add({
+    days: -29
+    }),
+    endDate: Date.today(),
+    minDate: '01/01/2012',
+    maxDate: '12/31/2014',
+    }
+    );
+    $('#form-date-range').daterangepicker({
+    ranges: {
+    'Today': ['today', 'today'],
+    'Yesterday': ['yesterday', 'yesterday'],
+    'Last 7 Days': [Date.today().add({
+    days: -6
+    }), 'today'],
+    'Last 29 Days': [Date.today().add({
+    days: -29
+    }), 'today'],
+    'This Month': [Date.today().moveToFirstDayOfMonth(), Date.today().moveToLastDayOfMonth()],
+    'Last Month': [Date.today().moveToFirstDayOfMonth().add({
+    months: -1
+    }), Date.today().moveToFirstDayOfMonth().add({
+    days: -1
+    })]
+    },
+    opens: (App.isRTL() ? 'left' : 'right'),
+    format: 'MM/dd/yyyy',
+    separator: ' to ',
+    startDate: Date.today().add({
+    days: -29
+    }),
+    endDate: Date.today(),
+    minDate: '01/01/2012',
+    maxDate: '12/31/2014',
+    locale: {
+    applyLabel: 'Submit',
+    fromLabel: 'From',
+    toLabel: 'To',
+    customRangeLabel: 'Custom Range',
+    daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+    monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    firstDay: 1
+    },
+    showWeekNumbers: true,
+    buttonClasses: ['btn-danger']
+    },
+    function (start, end) {
+    $('#form-date-range span').html(start.toString('MMMM d, yyyy') + ' - ' + end.toString('MMMM d, yyyy'));
+    });
+    $('#form-date-range span').html(Date.today().add({
+    days: -29
+    }).toString('MMMM d, yyyy') + ' - ' + Date.today().toString('MMMM d, yyyy'));
+    //modal version:
+    $('#form-date-range-modal').daterangepicker({
+    ranges: {
+    'Today': ['today', 'today'],
+    'Yesterday': ['yesterday', 'yesterday'],
+    'Last 7 Days': [Date.today().add({
+    days: -6
+    }), 'today'],
+    'Last 29 Days': [Date.today().add({
+    days: -29
+    }), 'today'],
+    'This Month': [Date.today().moveToFirstDayOfMonth(), Date.today().moveToLastDayOfMonth()],
+    'Last Month': [Date.today().moveToFirstDayOfMonth().add({
+    months: -1
+    }), Date.today().moveToFirstDayOfMonth().add({
+    days: -1
+    })]
+    },
+    opens: (App.isRTL() ? 'left' : 'right'),
+    format: 'MM/dd/yyyy',
+    separator: ' to ',
+    startDate: Date.today().add({
+    days: -29
+    }),
+    endDate: Date.today(),
+    minDate: '01/01/2012',
+    maxDate: '12/31/2014',
+    locale: {
+    applyLabel: 'Submit',
+    fromLabel: 'From',
+    toLabel: 'To',
+    customRangeLabel: 'Custom Range',
+    daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+    monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    firstDay: 1
+    },
+    showWeekNumbers: true,
+    buttonClasses: ['btn-danger']
+    },
+    function (start, end) {
+    $('#form-date-range-modal span').html(start.toString('MMMM d, yyyy') + ' - ' + end.toString('MMMM d, yyyy'));
+    });
+    $('#form-date-range-modal span').html(Date.today().add({
+    days: -29
+    }).toString('MMMM d, yyyy') + ' - ' + Date.today().toString('MMMM d, yyyy'));
+    }
+    var handleDatetimePicker = function () {        
+    $(".form_datetime").datetimepicker({
+    format: "dd MM yyyy - hh:ii",
+    pickerPosition: (App.isRTL() ? "bottom-right" : "bottom-left")
+    });
+    $(".form_advance_datetime").datetimepicker({
+    format: "dd MM yyyy - hh:ii",
+    autoclose: true,
+    todayBtn: true,
+    startDate: "2013-02-14 10:00",
+    pickerPosition: (App.isRTL() ? "bottom-right" : "bottom-left"),
+    minuteStep: 10
+    });
+    $(".form_meridian_datetime").datetimepicker({
+    format: "dd MM yyyy - HH:ii P",
+    showMeridian: true,
+    autoclose: true,
+    pickerPosition: (App.isRTL() ? "bottom-right" : "bottom-left"),
+    todayBtn: true
+    });
+    }
+    var handleClockfaceTimePickers = function () {
+    if (!jQuery().clockface) {
+    return;
+    }
+    $('.clockface_1').clockface();
+    $('#clockface_2').clockface({
+    format: 'HH:mm',
+    trigger: 'manual'
+    });
+    $('#clockface_2_toggle').click(function (e) {
+    e.stopPropagation();
+    $('#clockface_2').clockface('toggle');
+    });
+    $('#clockface_2_modal').clockface({
+    format: 'HH:mm',
+    trigger: 'manual'
+    });
+    $('#clockface_2_modal_toggle').click(function (e) {
+    e.stopPropagation();
+    $('#clockface_2_modal').clockface('toggle');
+    });
+    $('.clockface_3').clockface({
+    format: 'H:mm'
+    }).clockface('show', '14:30');
+    }
+    var handleInputMasks = function () {
+    $.extend($.inputmask.defaults, {
+    'autounmask': true
+    });
+    $("#mask_date").inputmask("d/m/y", {autoUnmask: true});  //direct mask        
+    $("#mask_date1").inputmask("d/m/y",{ "placeholder": "*"}); //change the placeholder
+    $("#mask_date2").inputmask("d/m/y",{ "placeholder": "dd/mm/yyyy" }); //multi-char placeholder
+    $("#mask_phone").inputmask("mask", {"mask": "(999) 999-9999"}); //specifying fn & options
+    $("#mask_tin").inputmask({"mask": "99-9999999"}); //specifying options only
+    $("#mask_number").inputmask({ "mask": "9", "repeat": 10, "greedy": false });  // ~ mask "9" or mask "99" or ... mask "9999999999"
+    $("#mask_decimal").inputmask('decimal', { rightAlignNumerics: false }); //disables the right alignment of the decimal input
+    $("#mask_currency").inputmask('€ 999.999.999,99', { numericInput: true });  //123456  =>  € ___.__1.234,56
+    $("#mask_currency2").inputmask('€ 999,999,999.99', { numericInput: true, rightAlignNumerics: false, greedy: false}); //123456  =>  € ___.__1.234,56
+    $("#mask_ssn").inputmask("999-99-9999", {placeholder:" ", clearMaskOnLostFocus: true }); //default
+    }
+    return {
+    //main function to initiate the module
+    init: function () {
+    handleWysihtml5();
+    handleToggleButtons();
+    handleTagsInput();
+    handlejQueryUIDatePickers();
+    handleDatePickers();
+    handleTimePickers();
+    handleDatetimePicker();
+    handleDateRangePickers();
+    handleClockfaceTimePickers();
+    handleInputMasks();
+    App.addResponsiveHandler(function(){
+    resetWysihtml5();
+    })
+    }
+    };
+    }();
+    jQuery(document).ready(function() { 
+		var contextPath = '$!rc.contextPath';
+		jQuery.ajax({
+            url: contextPath + "/channel/listAcquirer",
+			dataType: "json",
+            success: function (data) {
+            	var acquirerOptions = "";
+				for(var i = 0; i <data.length ; i++)
+				{
+					acquirerOptions += '<option value="'+ data[i].acquirerId+'">'+ data[i].acquirerName+'</option>';
+				}
+				
+				$("#acquirer").append(acquirerOptions);
+            }
+ 		});
+        FormValidation.init();
+        FormComponents.init();
+    });
+</script>
+</body>
+</html>

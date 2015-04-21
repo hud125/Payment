@@ -1,0 +1,105 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>九盈管理系统</title>
+</head>
+
+<body>
+<table width="99%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td width="10">&nbsp;</td>
+		<td height="30"><strong class="t14">创建通道供应</strong></td>
+	</tr>
+</table>
+#springBind("channelProvider.ID")
+<form id="cityform" name="form1" method="post"  #if(!$!status.value)action="$!{rc.contextPath}/channelProvider/save" #else action="$!{rc.contextPath}/channelProvider/update" #end >
+
+	#if($!status.value) <input type="hidden" name="$!status.expression" value="$!status.value"/> #end
+
+	<table width="99%" border="0" align="center" cellpadding="0" cellspacing="0" class="tableAdd borTop">
+		#springBind("channelProvider.acquirerId")
+		<input type="hidden" name="$!status.expression" value="$!status.value">
+		#springBind("channelProvider.providerName")
+		<tr>
+			<th width="14%" height="30" nowrap>通道提供<span style="color:#FF0000">*</span></th>
+			<td class="pl5">
+				<select name="$!status.expression">
+					<option value="SecurePay" #if($!status.value == 'SecurePay') selected #end >
+						网银
+                    </option>
+					<option value="ExpressPay" #if($!status.value == 'ExpressPay') selected #end>
+						快速支付
+                    </option>
+				</select>
+			</td>
+		</tr>
+		#springBind("channelProvider.transactionCurrencies")
+		<tr>
+			<th width="14%" height="30" nowrap>交易币种<span style="color:#FF0000">*</span></th>
+			<td class="pl5">
+				<input type="checkbox" value="USD" name="$!status.expression"  #if($!status.value && $!status.value.contains("USD")) checked #end />美元
+                <input type="checkbox" value="CNY" name="$!status.expression" #if($!status.value && $!status.value.contains("CNY"))  checked #end />人民币
+			</td>
+		</tr>
+		#springBind("channelProvider.settlementCurrencies")
+		<tr>
+			<th width="14%" height="30" nowrap>清算币种<span style="color:#FF0000">*</span></th>
+			<td class="pl5">
+              <input type="checkbox" value="USD" name="$!status.expression" #if($!status.value && $!status.value.contains("USD")) checked #end />美元
+              <input type="checkbox" value="CNY" name="$!status.expression" #if($!status.value && $!status.value.contains("CNY")) checked #end />人民币
+			</td>
+		</tr>
+		#springBind("channelProvider.cardOrgs")
+		<tr>
+			<th width="14%" height="30" nowrap>卡组织<span style="color:#FF0000">*</span></th>
+			<td class="pl5">
+                <select name="$!status.expression">
+					<option value="VISA"  #if($!status.value == 'VISA') selected #end>
+						VISA
+                    </option>
+					<option value="MASTER"  #if($!status.value == 'MASTER') selected #end>
+						MASTER
+                    </option>
+				</select>
+			</td>
+		</tr>
+		#springBind("channelProvider.supportCardNoTrasmit")
+		<tr>
+			<th width="14%" height="30" nowrap>是否支持Card Number Transmit<span style="color:#FF0000">*</span></th>
+			<td class="pl5">
+					<input type="radio" value="1" name="$!status.expression" $!status.value #if($!status.value == true) checked #end />是
+					<input type="radio" value="0" name="$!status.expression" #if($!status.value == false) checked #end/>否
+			</td>
+		</tr>
+		
+		#springBind("channelProvider.support3D")
+		<tr>
+			<th width="14%" height="30" nowrap>是否支持3D<span style="color:#FF0000">*</span></th>
+			<td class="pl5">
+					<input type="radio" value="1" name="$!status.expression" $!status.value #if($!status.value == true) checked #end />是
+					<input type="radio" value="0" name="$!status.expression" #if($!status.value == false) checked #end/>否
+			</td>
+		</tr>
+		
+		#springBind("channelProvider.supportDCC")
+		<tr>
+			<th width="14%" height="30" nowrap>是否支持DCC<span style="color:#FF0000">*</span></th>
+			<td class="pl5">
+					<input type="radio" value="1" name="$!status.expression" $!status.value #if($!status.value == true) checked #end />是
+					<input type="radio" value="0" name="$!status.expression" #if($!status.value == false) checked #end/>否
+			</td>
+		</tr>
+		
+		
+		<tr>
+			<th height="35">&nbsp;</th>
+			<td class="pl5">
+				<input type="submit" class="buttonBg" value="保存" />
+				<input type="button" class="buttonBg" value="取消返回" onClick="history.go(-1)" />
+			</td>
+		</tr>
+	</table>
+	<br>
+</form>
+</body>
+</html>

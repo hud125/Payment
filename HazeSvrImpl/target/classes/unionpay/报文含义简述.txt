@@ -1,0 +1,71 @@
+############## 商户表单说明 ###############
+##### 只包含了一小部分表单字段的说明，#####
+##### 详细的说明请参考接入接口规范。  #####
+###########################################
+
+#交易类型
+transType=01
+
+#原始交易流水号
+origQid=
+
+#商户号
+merId=105550149170027
+
+#商户简称
+merAbbr=银联商城
+
+#收单机构代码
+acqCode=00215800
+
+#商户类别
+merCode=1111
+
+#商品URL
+commodityUrl=http://218.80.192.231/shop1/payment/quickpay/quickpay_result.php?payid=123456&dd=123
+
+#商品名称
+commodityName=物品名称如短袖
+
+#商品单价 单位：分
+commodityUnitPrice=
+
+#商品数量
+commodityQuantity=
+
+#折扣 单位：分
+commodityDiscount=
+
+#运费 单位：分
+transferFee=
+
+#交易金额，单位为分
+orderAmount=8632
+
+#交易币种，156为人民币
+orderCurrency=156
+
+#用户IP
+customerIp=127.0.0.1
+
+#用户名
+customerName=张三
+
+#超时时间
+transTimeout=6000000
+
+#前台回调商户URL(前台通知)
+frontEndUrl=http://58.246.226.99/UpopSDK/payFrontResServlet
+
+#后台回调商户URL(后台通知)
+backEndUrl=http://58.246.226.99/UpopSDK/payBackResServlet
+
+#签名方法，MD5或RSA
+signMethod=RSA
+
+#商户保留域，
+#如果签名方法为RSA，需要制定证书索引号
+merReserved={merCertIndex=1010&cupCertIndex=41}
+#2.0认证支付
+merReserved={cardNumber=6212341111111111111&smsCode=123456&shippingCountryCode=142&shippingProvinceCode=130000&shippingCityCode=130100&shippingDistrictCode=130102&shippingStreetAddress=详细地址}
+

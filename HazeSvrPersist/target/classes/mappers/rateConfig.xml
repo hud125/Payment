@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.configuration.rate.RateConfigMapper">
+
+	<!-- result maps -->
+	<resultMap id="rateConfigMap" type="RateConfigEntity">
+		<id column="rate_config_id" property="ID" />
+		<result column="rc_target_id" property="targetId" />
+		<result column="rc_rate_role_classifier" property="rateRoleClassifier" />
+		<result column="rc_comments" property="comments" />
+		<result column="rc_cr_date" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="rc_up_date" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+	
+	<resultMap id="rateConfigMapWithParams" type="RateConfigEntity" extends="rateConfigMap">
+		<collection property="calculateRates" notNullColumn="calculation_rate_id"
+			resultMap="com.aurfy.haze.dao.configuration.rate.CalculateRateMapper.calculateRateMap" />
+		<collection property="steppedRates" notNullColumn="stepped_rate_id"
+			resultMap="com.aurfy.haze.dao.configuration.rate.SteppedRateMapper.steppedRateMap" />
+	</resultMap>
+
+	<insert id="insert" parameterType="RateConfigEntity">
+		INSERT INTO rate_config
+		(rate_config_id, target_id, rate_role_classifier, comments, create_date, update_date)
+		VALUES
+		(#{ID}, #{targetId}, #{rateRoleClassifier}, #{comments}, #{createDate}, #{updateDate})
+	</insert>
+
+	<sql id="defaultSelect">
+		SELECT
+		rc.rate_config_id, rc.target_id rc_target_id, rc.rate_role_classifier rc_rate_role_classifier, 
+		rc.comments as rc_comments, rc.create_date as rc_cr_date, rc.update_date as rc_up_date
+		FROM rate_config rc
+	</sql>
+	
+	<select id="selectOne" parameterType="string" resultMap="rateConfigMap">
+		<include refid="defaultSelect" />
+		WHERE rc.rate_config_id = #{ID}
+	</select>
+	
+	<select id="selectBy" resultMap="rateConfigMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					rc.rate_config_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.targetId!=null">
+					AND rc.target_id = #{filterEntity.targetId}
+				</if>
+				<if test="filterEntity.rateRoleClassifier!=null">
+					AND rc.rate_role_classifier = #{filterEntity.rateRoleClassifier}
+				</if>
+				<if test="filterEntity.comments!=null">
+					AND rc.comments like "%"#{filterEntity.comments}"%"
+				</if>
+				<if test="filterEntity.createDate !=null">
+					AND rc.create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate !=null">
+					AND rc.update_date = #{filterEntity.updateDate}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	
+	<select id="selectAll" resultMap="rateConfigMap">
+		<include refid="defaultSelect" />
+	</select>
+
+	<sql id="defaultCount">
+		SELECT count(*) FROM rate_config rc
+	</sql>
+	
+	<select id="countBy" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.targetId != null">
+					target_id like #{targetId}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+
+	<update id="update" parameterType="RateConfigEntity">
+		UPDATE rate_config
+		<set>
+			<if test="targetId != null">target_id = #{targetId},</if>
+			<if test="rateRoleClassifier != null">rate_role_classifier = #{rateRoleClassifier},</if>
+			<if test="comments != null">comments = #{comments},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="createDate != null">update_date = #{updateDate},</if>
+		</set>
+		WHERE rate_config_id = #{ID}
+	</update>
+
+	<delete id="delete" parameterType="string">
+		DELETE FROM rate_config WHERE rate_config_id = #{ID}
+	</delete>
+
+	<sql id="cascadeSelect">
+		SELECT
+		rc.rate_config_id, rc.target_id rc_target_id, rc.rate_role_classifier rc_rate_role_classifier, 
+		rc.comments as rc_comments, rc.create_date as rc_cr_date, rc.update_date as rc_up_date, 
+		cr.calculation_rate_id, cr.card_org cr_card_org, cr.currency cr_currency, 
+		cr.rate_classifier cr_rate_classifier, cr.rate_algorithm cr_rate_algorithm, 
+		cr.percentage cr_percentage, cr.fixed_amount cr_fixed_amount, 
+		cr.min_amount cr_min_amount, cr.max_amount cr_max_amount, 
+		cr.ext1, cr.ext2, cr.ext3, 
+		cr.comments cr_comments, cr.owner_id cr_owner_id, 
+		cr.create_date cr_cr_dt, cr.update_date cr_up_dt, 
+		sr.stepped_rate_id, sr.rate_role_classifier sr_rate_role_classifier, 
+		sr.target_id sr_target_id, sr.currency sr_currency, 
+		sr.min_bound sr_min_bound, sr.percentage sr_percentage, 
+		sr.fixed_amount sr_fixed_amount, sr.min_amount sr_min_amount, sr.max_amount sr_max_amount, 
+		sr.comments sr_comments, sr.owner_id sr_owner_id, 
+		sr.create_date sr_cr_dt, sr.update_date sr_up_dt
+		FROM rate_config rc 
+			left join stepped_rate_relation srr on srr.rate_config_id = rc.rate_config_id
+			left join stepped_rate sr on srr.stepped_rate_id = sr.stepped_rate_id
+			left join cal_rate_relation crr on crr.rate_config_id = rc.rate_config_id
+			left join calculation_rate cr on crr.calculation_rate_id = cr.calculation_rate_id
+	</sql>
+	
+	<select id="selectOneWithParams" parameterType="RateConfigEntity" resultMap="rateConfigMapWithParams">
+		<include refid="cascadeSelect" />
+		WHERE 1 = 1 
+		<if test="ID != null">
+		    AND rc.rate_config_id = #{ID}
+		</if>
+	</select>
+	
+	<select id="selectByWithParams" parameterType="RateConfigEntity" resultMap="rateConfigMapWithParams">
+		<include refid="cascadeSelect" />
+		WHERE 1 = 1 
+		<if test="targetId != null">
+		    AND rc.target_id = #{targetId}
+		</if>
+		<if test="rateRoleClassifier != null">
+		    AND rc.rate_role_classifier like #{rateRoleClassifier}
+		</if>
+	</select>
+
+</mapper>

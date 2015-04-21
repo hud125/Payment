@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.configuration.rate.SteppedRateMapper">
+
+	<!-- result maps -->
+	<resultMap id="steppedRateMap" type="SteppedRateEntity">
+		<id column="stepped_rate_id" property="ID" />
+		<result column="sr_rate_role_classifier" property="rateRoleClassifier" />
+		<result column="sr_target_id" property="targetId" />
+		<result column="sr_currency" property="currency" />
+		<result column="sr_min_bound" property="minBound" />
+		<result column="sr_percentage" property="percentage" />
+		<result column="sr_fixed_amount" property="fixedAmount" />
+		<result column="sr_min_amount" property="minAmount" />
+		<result column="sr_max_amount" property="maxAmount" />
+		<result column="sr_comments" property="comments" />
+		<result column="sr_owner_id" property="ownerId" />
+		<result column="sr_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="sr_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+
+	<insert id="insert" parameterType="SteppedRateEntity" >
+		INSERT INTO stepped_rate 
+				(
+				stepped_rate_id, rate_role_classifier, target_id, 
+				currency, min_bound, percentage, fixed_amount, 
+				min_amount, max_amount, comments, owner_id, create_date, update_date)
+		VALUES (
+				#{ID}, #{rateRoleClassifier}, #{targetId}, 
+				#{currency}, #{minBound}, #{percentage}, #{fixedAmount}, 
+				#{minAmount}, #{maxAmount}, #{comments}, #{ownerId}, #{createDate}, #{updateDate})
+	</insert>
+
+	<sql id="defaultSelect">
+		SELECT 	sr.stepped_rate_id, sr.rate_role_classifier sr_rate_role_classifier, 
+				sr.target_id sr_target_id, sr.currency sr_currency, 
+				sr.min_bound sr_min_bound, sr.percentage sr_percentage, 
+				sr.fixed_amount sr_fixed_amount, sr.min_amount sr_min_amount, sr.max_amount sr_max_amount, 
+				sr.comments sr_comments, sr.owner_id sr_owner_id, 
+				sr.create_date sr_cr_dt, sr.update_date sr_up_dt
+		FROM stepped_rate sr
+	</sql>
+	
+	<select id="selectOne" parameterType="string" resultMap="steppedRateMap">
+		<include refid="defaultSelect" />
+		 WHERE sr.stepped_rate_id = #{ID}
+	</select>
+	
+	<select id="selectBy" resultMap="steppedRateMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					sr.stepped_rate_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	
+	<select id="selectAll" resultMap="steppedRateMap">
+		<include refid="defaultSelect" />
+	</select>
+
+	<sql id="defaultCount">
+		SELECT count(*) FROM stepped_rate sr
+	</sql>
+	
+	<select id="countBy"  resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					sr.stepped_rate_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+
+	<update id="update" parameterType="SteppedRateEntity" >
+		update stepped_rate  
+	    <set>
+	      <if test="rateRoleClassifier != null">rate_role_classifier = #{rateRoleClassifier},</if>
+	      <if test="targetId != null">target_id = #{targetId},</if>
+	      <if test="currency != null">currency = #{currency},</if>
+	      <if test="minBound != null">min_bound = #{minBound},</if>
+	      <if test="percentage != null">percentage = #{percentage},</if>
+	      <if test="fixedAmount != null">fixed_amount = #{fixedAmount},</if>
+	      <if test="minAmount != null">min_amount = #{minAmount},</if>
+	      <if test="maxAmount != null">max_amount = #{maxAmount},</if>
+	      <if test="comments != null">comments = #{comments},</if>
+	      <if test="ownerId != null">owner_id = #{ownerId},</if>
+	      <if test="createDate != null">create_date = #{createDate},</if>
+	      <if test="updateDate != null">update_date = #{updateDate},</if>
+	    </set>
+		where stepped_rate_id = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="string" >
+		DELETE FROM stepped_rate WHERE stepped_rate_id = #{ID}
+	</delete>
+
+</mapper>

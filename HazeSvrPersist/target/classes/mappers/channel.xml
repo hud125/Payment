@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.configuration.channel.ChannelMapper">
+
+	<!-- result maps -->
+	<resultMap id="channelMap" type="ChannelEntity">
+		<id column="channel_id" property="ID" />
+		<result column="acq_id" property="acquirerId" />
+		<result column="acq_name" property="acquirerName" />
+		<result column="provider_id" property="channelProviderId" />
+		<result column="provider_name" property="channelProviderName" />
+		<result column="provider_classifier" property="providerClassifier" />
+		<result column="channel_txn_currency" property="transactionCurrency" />
+		<result column="channel_settle_currency" property="settlementCurrency" />
+		<result column="channel_card_org" property="cardOrg" />
+		<result column="channel_status" property="status" />
+		<result column="channel_due_date" property="dueDate" />
+		<result column="channel_comments" property="comments" />
+		<result column="channel_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="channel_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+
+	</resultMap>
+
+	<resultMap id="channelMapWithParams" type="ChannelEntity" extends="channelMap">
+		<collection property="channelParams" notNullColumn="config_key"
+			resultMap="com.aurfy.haze.dao.configuration.channel.ChannelParameterMapper.channelParameterMap" />
+	</resultMap>
+
+	<insert id="insert" parameterType="ChannelEntity">
+		INSERT INTO channel
+		(channel_id, acq_id, acq_name, provider_id, provider_name,
+		provider_classifier,
+		txn_currency, settle_currency, card_org, status, due_date,
+		comments, create_date, update_date
+		)
+		VALUES (#{ID},
+		#{acquirerId}, #{acquirerName}, #{channelProviderId}, #{channelProviderName}, #{providerClassifier},
+		#{transactionCurrency},
+		#{settlementCurrency},
+		#{cardOrg}, #{status}, #{dueDate},
+		#{comments}, #{createDate}, #{updateDate})
+	</insert>
+
+	<sql id="channelColumn">
+		ch.channel_id, ch.acq_id, ch.acq_name, ch.provider_id, ch.provider_name,
+		ch.provider_classifier,
+		ch.txn_currency
+		channel_txn_currency,
+		ch.settle_currency channel_settle_currency, ch.card_org channel_card_org,
+		ch.status
+		channel_status, ch.due_date channel_due_date,
+		ch.comments channel_comments, ch.create_date channel_cr_dt,
+		ch.update_date channel_up_dt
+	</sql>
+	<sql id="defaultSelect">
+		SELECT
+		<include refid="channelColumn" />
+		FROM channel ch
+	</sql>
+
+	<sql id="cascadeSelect">
+		SELECT
+		<include refid="channelColumn" />
+		, param.channel_param_id, param.config_key, param.config_value
+		FROM channel ch left join
+		channel_param param on
+		ch.channel_id = param.channel_id
+	</sql>
+
+	<select id="selectOne" parameterType="string" resultMap="channelMap">
+		<include refid="defaultSelect" />
+		WHERE ch.channel_id = #{ID}
+	</select>
+
+	<select id="selectOneWithParams" parameterType="string" resultMap="channelMapWithParams">
+		<include refid="cascadeSelect" />
+		WHERE ch.channel_id = #{ID}
+	</select>
+
+	<select id="selectBy" resultMap="channelMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					channel_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	<select id="selectAll" resultMap="channelMap">
+		<include refid="defaultSelect" />
+	</select>
+	<select id="selectMerChannelWithParms" resultMap="channelMapWithParams">
+		<include refid="cascadeSelect" />
+		INNER JOIN channel_mapping mapping ON mapping.channel_id = ch.channel_id
+		WHERE mapping.mer_id = #{merchantId} AND
+		ch.txn_currency = #{txnCurrency}
+	</select>
+	<select id="selectMerDefaultChannelWithParams" resultMap="channelMapWithParams">
+		<include refid="cascadeSelect" />
+		INNER JOIN channel_mapping mapping ON mapping.channel_id = ch.channel_id
+		WHERE mapping.mer_id = #{merchantId} AND
+		mapping.default_channel = 1
+	</select>
+	<sql id="defaultCount">
+		SELECT count(*) FROM channel
+	</sql>
+	<select id="countBy" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					channel_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+
+	<update id="update" parameterType="ChannelEntity">
+		update channel
+		<set>
+			<if test="acquirerId != null">acq_id = #{acquirerId},</if>
+			<if test="acquirerName != null">acq_name = #{acquirerName},</if>
+			<if test="channelProviderId != null">provider_id = #{channelProviderId},</if>
+			<if test="providerClassifier != null">provider_classifier = #{providerClassifier},</if>
+			<if test="transactionCurrency != null">txn_currency = #{transactionCurrency},</if>
+			<if test="settlementCurrency != null">settle_currency = #{settlementCurrency},</if>
+			<if test="cardOrg != null">card_org = #{cardOrg},</if>
+			<if test="status != null">status = #{status},</if>
+			<if test="dueDate != null">due_date = #{dueDate},</if>
+			<if test="comments != null">comments = #{comments},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="updateDate != null">update_date = #{updateDate},</if>
+		</set>
+		where channel_id = #{ID}
+	</update>
+
+	<delete id="delete" parameterType="string">
+		DELETE ch, mapping FROM channel ch LEFT JOIN channel_mapping mapping
+		ON
+		ch.channel_id=mapping.channel_id WHERE ch.channel_id = #{ID}
+	</delete>
+
+</mapper>

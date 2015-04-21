@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.perm.ColumnScopeMapper">
+	<resultMap id="ColumnScopeMap" type="ColumnScopeEntity">
+		<id column="column_scope_id" property="ID" />
+		<result column="column_name" property="columnName" />
+		<result column="property_name" property="propertyName" />
+		<result column="column_comments" property="comments" />
+		<result column="column_perm_entry_id" property="permEntryId" />
+		<result column="column_entry_key" property="permEntryKey" />
+		<result column="column_create_date" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="column_update_date" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+
+	<insert id="insert" parameterType="ColumnScopeEntity">
+		INSERT INTO p_column_scope
+			(column_scope_id, column_name, property_name, comments,  create_date, update_date, perm_entry_id)
+		VALUES
+			(#{ID}, #{columnName}, #{propertyName}, #{comments}, #{createDate}, #{updateDate}, #{permEntryId})
+	</insert>
+	
+	<sql id="defaultSelect">
+		SELECT  pcs.column_scope_id, pcs.column_name, pcs.property_name, 
+				pcs.comments column_comments, pcs.create_date column_create_date, pcs.update_date column_update_date,
+				pcs.perm_entry_id column_perm_entry_id, entry.entry_key column_entry_key
+		FROM p_column_scope pcs 
+			left join p_perm_entry entry on pcs.perm_entry_id = entry.perm_entry_id
+	</sql>
+	
+	<select id="selectOne" parameterType="string" resultMap="ColumnScopeMap" > 
+		<include refid="defaultSelect"/>
+		WHERE pcs.column_scope_id = #{ID}
+	</select>
+	
+	<select id="selectBy" resultMap="ColumnScopeMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID != null">
+					pcs.column_scope_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.columnName != null">
+					AND pcs.column_name = #{filterEntity.columnName}
+				</if>
+				<if test="filterEntity.propertyName != null">
+					AND pcs.property_name = #{filterEntity.propertyName}
+				</if>
+				<if test="filterEntity.createDate != null">
+					AND pcs.create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate != null">
+					AND pcs.update_date = #{filterEntity.updateDate}
+				</if>
+				<if test="filterEntity.permEntryId != null">
+					AND pcs.perm_entry_id = #{filterEntity.permEntryId}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	
+	<select id="selectAll" resultMap="ColumnScopeMap"  > 
+		<include refid="defaultSelect"/>
+		ORDER BY pcs.perm_entry_id
+	</select>
+	
+	<sql id="defaultCount">
+		SELECT count(*) FROM p_column_scope pcs 
+	</sql>
+	
+	<select id="countBy" parameterType="ColumnScopeEntity" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.columnName != null">
+					AND column_name = #{filterEntity.columnName}
+				</if>
+				<if test="filterEntity.propertyName != null">
+					AND property_name = #{filterEntity.propertyName}
+				</if>
+				<if test="filterEntity.permEntryId != null">
+					AND perm_entry_id = #{filterEntity.permEntryId}
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+	
+	<update id="update" parameterType="ColumnScopeEntity">
+		UPDATE p_column_scope
+		<set>
+			<if test="columnName != null">column_name=#{columnName}, </if>
+			<if test="propertyName != null">property_name=#{propertyName}, </if>
+			<if test="comments != null">comments=#{comments}, </if>
+			<if test="createDate != null">create_date=#{createDate}, </if>
+			<if test="updateDate != null">update_date=#{updateDate}, </if>
+			<if test="permEntryId != null">perm_entry_id=#{permEntryId}, </if>
+		</set>
+		WHERE 
+			column_scope_id = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="string">
+		DELETE FROM p_column_scope WHERE column_scope_id = #{ID}
+	</delete>
+
+</mapper>

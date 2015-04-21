@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.infra.LogisticsMapper">
+
+	<resultMap id="logisticsEntity" type="LogisticsEntity">
+		<id column="logistics_id" property="ID"/>
+		<result column="name" property="name"/>
+		<result column="abbr" property="abbreviation"/>
+		<result column="url" property="url"/>
+		<result column="inquiry_handler" property="inquiryHandler"/>
+		<result column="comments" property="comments"/>
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+	<insert id="insert" parameterType="logisticsEntity">
+		INSERT INTO logistics
+		(logistics_id, name, abbr, url, inquiry_handler, comments, create_date, update_date)
+		VALUES (#{ID}, #{name}, #{abbreviation}, #{url}, #{inquiryHandler}, #{comments}, #{createDate}, #{updateDate})
+	</insert>
+	<delete id="delete" parameterType="string">
+		DELETE FROM logistics
+		WHERE logistics_id = #{ID}
+	</delete>
+	<sql id="defaultSelect">
+		SELECT
+		logistics_id, name, abbr, url, inquiry_handler, comments, create_date, update_date
+		FROM logistics 
+	</sql>
+	<select id="selectOne" parameterType="string" resultMap="logisticsEntity">
+		<include refid="defaultSelect"/>
+		WHERE logistics_id = #{ID}
+	</select>
+	<select id="selectAll" resultMap="logisticsEntity">
+		<include refid="defaultSelect"/>
+	</select>
+	<select id="selectBy" resultMap="logisticsEntity">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID != null">
+					logistics_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.name != null">
+					AND name = #{filterEntity.name}
+				</if>
+				<if test="filterEntity.abbreviation !=null">
+					AND abbr like "%"#{filterEntity.abbreviation}"%"
+				</if>
+				<if test="filterEntity.url!=null">
+					AND url like "%"#{filterEntity.url}"%"
+				</if>
+				<if test="filterEntity.inquiryHandler != null">
+					AND inquiry_handler like "%"#{filterEntity.inquiryHandler}"%"
+				</if>
+				<if test="filterEntity.comments != null">
+					AND comments like "%"#{filterEntity.comments}"%"
+				</if>
+				<if test="filterEntity.createDate != null">
+					AND create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate != null">
+					AND update_date = #{filterEntity.updateDate}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	<sql id="defaultCount">
+		SELECT count(*) FROM logistics
+	</sql>
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount"/>
+	</select>
+	<select id="countBy" parameterType="LogisticsEntity" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.name != null">
+					name like #{filterEntity.name}
+				</if>
+			</if>
+		</where>
+	</select>
+	<update id="update" parameterType="logisticsEntity">
+		UPDATE logistics lg
+			<set>
+				<if test="name != null">lg.name = #{name},</if>
+				<if test="abbreviation != null">lg.abbr = #{abbreviation},</if>
+				<if test="url != null">lg.url = #{url},</if>
+				<if test="inquiryHandler != null">lg.inquiry_handler = #{inquiryHandler},</if>
+				<if test="comments != null">lg.comments = #{comments},</if>
+				<if test="createDate != null">lg.create_date = #{createDate},</if>
+				<if test="updateDate != null">lg.update_date = #{updateDate},</if>
+			</set>
+	</update>
+</mapper>

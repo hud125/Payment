@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.conf.TerminalMfrMapper">
+
+    <resultMap id="terminalMfrMap" type="TerminalMfrEntity">
+		<id column="terminal_mfr_id" property="ID" />
+		<result column="factory_name" property="factoryName" />
+		<result column="contactor" property="contactor" />
+		<result column="telphone" property="telphone" />
+		<result column="cellphone" property="cellphone" />
+		<result column="url" property="URL" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />			
+	</resultMap>
+	
+	
+	<insert id="insert" parameterType="TerminalMfrEntity" >
+		INSERT INTO terminal_mfr 
+		(terminal_mfr_id,factory_name,contactor,telphone,cellphone,url,create_date,update_date)
+		VALUES 
+		(#{ID}, #{factoryName},#{contactor},#{telphone},#{cellphone},#{URL},#{createDate},#{updateDate})
+	</insert>
+	
+	<select id="selectOne" parameterType="String" resultMap="terminalMfrMap">
+		SELECT terminal_mfr_id,factory_name,contactor,telphone,cellphone,url,create_date,update_date
+		FROM terminal_mfr WHERE terminal_mfr_id= #{ID}
+	</select>
+	
+	<select id="selectAll" resultMap="terminalMfrMap">
+		SELECT terminal_mfr_id,factory_name,contactor,telphone,cellphone,url,create_date,update_date FROM terminal_mfr
+	</select>
+	
+	
+	<select id="selectBy" resultMap="terminalMfrMap">
+		SELECT terminal_mfr_id,factory_name,contactor,telphone,cellphone,url,create_date,update_date FROM terminal_mfr
+		<where>
+			<if test="filterEntity.ID !=null">
+				terminal_mfr_id = #{filterEntity.ID}
+			</if>
+			<if test="filterEntity.factoryName!=null">
+				AND factory_name = #{filterEntity.factoryName}
+			</if>
+			<if test="filterEntity.contactor!=null">
+				AND contactor = #{filterEntity.contactor}
+			</if>
+			<if test="filterEntity.telphone!=null">
+				AND telphone = #{filterEntity.telphone}
+			</if>
+			<if test="filterEntity.cellphone!=null">
+				AND cellphone = #{filterEntity.cellphone} 
+			</if>
+			<if test="filterEntity.URL!=null">
+				AND url = #{filterEntity.URL} 
+			</if>
+				
+		</where>
+	</select>
+	
+	<sql id="defaultCount">
+		SELECT count(*) FROM terminal_mfr
+	</sql>
+	<select id="countBy" parameterType="TerminalMfrEntity" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.ID != null">
+					terminal_mfr_id = #{filterEntity.ID}
+				</if>
+			    <if test="filterEntity.factoryName!=null">
+				    AND factory_name = #{filterEntity.factoryName}
+			    </if>
+			    <if test="filterEntity.contactor!=null">
+				    AND contactor = #{filterEntity.contactor}
+			    </if> 
+			    <if test="filterEntity.telphone!=null">
+				    AND telphone = #{filterEntity.telphone}
+			    </if>
+			    <if test="filterEntity.cellphone!=null">
+				    AND cellphone = #{filterEntity.cellphone} 
+			    </if>
+			    <if test="filterEntity.URL!=null">
+				    AND url = #{filterEntity.URL} 
+			    </if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+	
+	<update id="update" parameterType="TerminalMfrEntity" >
+		update terminal_mfr 
+		<set>
+		  <if test="factoryName != null"> factory_name = #{factoryName},</if>
+	      <if test="contactor != null">contactor = #{contactor},</if>
+	      <if test="telphone != null">telphone = #{telphone},</if>
+	      <if test="contactor != null">contactor = #{contactor},</if>
+	      <if test="URL != null">url = #{URL},</if>
+	      <if test="createDate != null">create_date = #{createDate},</if>
+	      <if test="updateDate != null">update_date = #{updateDate},</if>
+		</set>
+		WHERE terminal_mfr_id = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="string">
+		DELETE FROM terminal_mfr WHERE terminal_mfr_id = #{ID}
+	</delete>
+	
+</mapper>
+
+

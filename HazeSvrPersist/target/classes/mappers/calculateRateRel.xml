@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.configuration.rate.CalculateRateRelMapper">
+
+	<!-- result maps -->
+	<resultMap id="calculateRateRelMap" type="CalculateRateRelEntity">
+		<association property="rateConfig" javaType="RateConfigEntity" resultMap="com.aurfy.haze.dao.configuration.rate.RateConfigMapper.rateConfigMap" />
+		<association property="calculateRate" javaType="CalculateRateEntity" resultMap="com.aurfy.haze.dao.configuration.rate.CalculateRateMapper.calculateRateMap" />
+	</resultMap>
+
+	<insert id="insert" parameterType="CalculateRateRelEntity" >
+		INSERT INTO cal_rate_relation 
+		(rate_config_id, calculation_rate_id)
+		VALUES 
+		(#{rateConfig.ID}, #{calculateRate.ID})
+	</insert>
+	
+	<sql id="defaultSelect">
+		SELECT  cr.calculation_rate_id, cr.card_org cr_card_org, cr.currency cr_currency, 
+				cr.rate_classifier cr_rate_classifier, cr.rate_algorithm cr_rate_algorithm, 
+				cr.percentage cr_percentage, cr.fixed_amount cr_fixed_amount, 
+				cr.min_amount cr_min_amount, cr.max_amount cr_max_amount, 
+				cr.ext1, cr.ext2, cr.ext3, 
+				cr.comments cr_comments, cr.owner_id cr_owner_id, 
+				cr.create_date cr_cr_dt, cr.update_date cr_up_dt,
+				rc.rate_config_id, rc.target_id rc_target_id, rc.rate_role_classifier rc_rate_role_classifier, 
+				rc.comments as rc_comments, rc.create_date as rc_cr_date, rc.update_date as rc_up_date
+		FROM cal_rate_relation crr 
+			left join calculation_rate cr on crr.calculation_rate_id = cr.calculation_rate_id
+			left join rate_config rc on crr.rate_config_id = rc.rate_config_id
+	</sql>
+
+	<select id="selectCalculateRateRelByRateConf" parameterType="string" resultMap="calculateRateRelMap">
+		<include refid="defaultSelect"/>
+		WHERE crr.rate_config_id = #{rateConfig.ID}
+	</select>
+
+	<select id="selectCalculateRateRelByCalculateRate" parameterType="string" resultMap="calculateRateRelMap">
+		<include refid="defaultSelect"/>
+		WHERE crr.calculation_rate_id = #{calculateRate.ID}
+	</select>
+
+	<update id="updateCalculateRateRelByCalculateRate" parameterType="CalculateRateRelEntity">
+		UPDATE cal_rate_relation 
+		<set>
+	      <if test="calculateRate != null">calculation_rate_id = #{calculateRate.ID},</if>
+	    </set>
+		WHERE rate_config_id = #{rateConfig.ID}
+	</update>
+
+	<delete id="deleteCalculateRateRelByRateConfAndCalculateRate" parameterType="CalculateRateRelEntity">
+		DELETE FROM cal_rate_relation 
+		WHERE calculation_rate_id = #{calculateRate.ID} and rate_config_id = #{rateConfig.ID}
+	</delete>
+
+</mapper>

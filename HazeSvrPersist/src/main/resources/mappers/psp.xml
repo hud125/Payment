@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.infra.mer.PspMapper">
+
+	<!-- result maps -->
+	<resultMap id="pspMap" type="PspEntity">
+		<id column="psp_id" property="ID" />
+		<result column="user_id" property="userId" />
+		<result column="rate_config_id" property="rateConfigId" />
+		<result column="sales_id" property="salesId" />
+		<result column="agent_id" property="agentId" />
+		<result column="psp_comments" property="comments" />
+		<result column="psp_create_date" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="psp_update_date" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+
+	<insert id="insert" parameterType="PspEntity">
+		INSERT INTO psp
+		(psp_id, agent_id, user_id, sales_id, rate_config_id, comments, create_date, update_date)
+		VALUES
+		(#{ID}, #{agentId}, #{userId}, #{salesId}, #{rateConfigId}, #{comments}, #{createDate}, #{updateDate})
+	</insert>
+
+	<sql id="defaultSelect">
+		SELECT
+		psp.psp_id, psp.agent_id, psp.sales_id, psp.user_id, psp.rate_config_id, 
+		psp.comments psp_comments, psp.create_date psp_create_date, psp.update_date psp_update_date
+		FROM psp psp
+	</sql>
+	
+	<select id="selectOne" parameterType="string" resultMap="pspMap">
+		<include refid="defaultSelect" />
+		WHERE psp.psp_id = #{ID}
+	</select>
+	
+	<select id="selectBy" resultMap="pspMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					psp.psp_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.agentId !=null">
+					AND psp.agent_id = #{filterEntity.agentId}
+				</if>
+				<if test="filterEntity.salesId != null">
+					AND psp.sales_id = #{filterEntity.salesId}
+				</if>
+				<if test="filterEntity.userId != null">
+					AND psp.user_id = #{filterEntity.userId}
+				</if>
+				<if test="filterEntity.rateConfigId != null">
+					AND psp.rate_config_id = #{filterEntity.rateConfigId}
+				</if>
+				<if test="filterEntity.comments!=null">
+					AND psp.comments like "%"#{filterEntity.comments}"%"
+				</if>
+				<if test="filterEntity.createDate !=null">
+					AND psp.create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate !=null">
+					AND psp.update_date = #{filterEntity.updateDate}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	
+	<select id="selectAll" resultMap="pspMap">
+		<include refid="defaultSelect" />
+	</select>
+
+	<sql id="defaultCount">
+		SELECT count(*) FROM psp psp
+	</sql>
+	
+	<select id="countBy" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.agentId != null">
+					psp.agent_id = #{filterEntity.agentId}
+				</if>
+				<if test="filterEntity.salesId != null">
+					AND psp.sales_id = #{filterEntity.salesId}
+				</if>
+				<if test="filterEntity.userId != null">
+					AND psp.user_id = #{filterEntity.userId}
+				</if>
+				<if test="filterEntity.rateConfigId != null">
+					AND psp.rate_config_id = #{filterEntity.rateConfigId}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+
+	<update id="update" parameterType="PspEntity">
+		UPDATE psp
+		<set>
+			<if test="agentId != null">agent_id = #{agentId},</if>
+			<if test="salesId != null">sales_id = #{salesId},</if>
+			<if test="userId != null">user_id = #{userId},</if>
+			<if test="rateConfigId != null">rate_config_id = #{rateConfigId},</if>
+			<if test="comments != null">comments = #{comments},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="createDate != null">update_date = #{updateDate},</if>
+		</set>
+		WHERE psp_id = #{ID}
+	</update>
+
+	<delete id="delete" parameterType="string">
+		DELETE FROM psp WHERE psp_id = #{ID}
+	</delete>
+
+</mapper>

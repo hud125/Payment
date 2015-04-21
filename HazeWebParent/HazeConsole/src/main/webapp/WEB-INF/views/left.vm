@@ -1,0 +1,97 @@
+<div class="page-sidebar nav-collapse collapse">
+    <!-- BEGIN SIDEBAR MENU -->        
+    <ul class="page-sidebar-menu">
+        <li>
+            <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+            <div class="sidebar-toggler hidden-phone"></div>
+            <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+        </li>
+        <li class="start " id="01">
+            <a href="$!rc.contextPath">
+                <i class="icon-home"></i>
+                <span class="title">#springMessage("screen.left.home")</span>
+            </a>
+        </li>
+        #cache("sideBar", $!{cacheUpdate})
+        #perm("Console_Channel")
+            <li id="02">
+                <a href="javascript:;">
+                    <i class="icon-cogs"></i>
+                    <span class="title">#springMessage("screen.left.channel")</span>
+                    <span class="arrow "></span>
+                </a>
+                <ul class="sub-menu">
+                   #perm("Console_Channel_Channel_list")
+                        <li  id="0201">
+                            <a href="$!rc.contextPath/channel/list" >
+                                #springMessage("screen.left.channel.channel")</a>
+                        </li>
+                    #end
+                    #perm("Console_Channel_Acquirer_list")
+                        <li id="0202">
+                            <a href="$!rc.contextPath/acquirer/list" >
+                                Acquirer</a>
+                        </li>
+                    #end
+                   
+                    <li >
+                        <a href="$!rc.contextPath/channelProvider/list">
+                            Channel Provider</a>
+                    </li>
+                    <li >
+                        <a href="$rc.contextPath/bank/list">
+                            Bank</a>
+                    </li>
+                    <li >
+                        <a href="$rc.contextPath/bankAccount/list">
+                            BankAccount</a>
+                    </li>
+                </ul>
+            </li>
+        #end
+        <li id="03">
+            <a href="javascript:;">
+                <i class="icon-cogs"></i>
+                <span class="title">Infrastrcture</span>
+                <span class="arrow "></span>
+            </a>
+            <ul class="sub-menu">
+                <li id="0301">
+                    <a href="$!rc.contextPath/auditLog/list">AuditLog</a>
+                </li>
+            </ul>
+        </li>
+		<li id="04">
+			<a href="javascript:;">
+                <i class="icon-cogs"></i>
+                <span class="title">Transaction</span>
+                <span class="arrow "></span>
+            </a>
+            <ul class="sub-menu">
+                <li id="0301">
+                    <a href="$!rc.contextPath/merTxn/list">MerchantTransaction</a>
+                </li>
+            </ul>
+        </li>
+#end
+    </ul>
+    <!-- END SIDEBAR MENU -->
+</div>
+<script>
+    var liId = $("#liId").val();
+    var lis = $(".page-sidebar").find("li");
+    var li;
+    for(var i = 0; i < lis.size(); i++)
+        {
+        li = lis.get(i);
+        if($(li).attr("id") == liId)
+        {
+            $(li).attr("class","active");
+            if(liId.length == 4)
+            {
+            	$(li).parent().parent().attr("class","active");
+            }
+        }
+		
+        }
+</script>

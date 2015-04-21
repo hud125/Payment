@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.configuration.channel.ChannelProviderMapper">
+
+	<!-- result maps -->
+	<resultMap id="channelProviderMap" type="ChannelProviderEntity">
+		<id column="provider_id" property="ID" />
+		<result column="provider_name" property="providerName" />
+		<result column="txn_currencies" property="transactionCurrencies" />
+		<result column="settle_currencies" property="settlementCurrencies" />
+		<result column="prod_card_org" property="cardOrg" />
+		<result column="prod_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="prod_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="prod_owner_id" property="ownerId" />
+		<result column="acq_id" property="acquirerId" />
+		<result column="bank_acc_id" property="bankAccountId" />
+		<result column="support_card_no_transmit" property="supportCardNoTrasmit" />
+		<result column="support_3d" property="support3D" />
+		<result column="support_dcc" property="supportDCC" />
+		<result column="channel_param_keys" property="channelParamKeys" />
+		<result column="comments" property="comments" />
+		<result column="provider_classifier" property="providerClassifier" />
+	</resultMap>
+
+	<insert id="insert" parameterType="ChannelProviderEntity" >
+		INSERT INTO channel_provider 
+			(provider_id, acq_id, provider_name, txn_currencies, settle_currencies, bank_acc_id,channel_param_keys,comments,
+				card_org, create_date, update_date, owner_id, support_card_no_transmit, support_3d, support_dcc, provider_classifier)
+		VALUES 
+			(#{ID}, #{acquirerId}, #{providerName}, #{transactionCurrencies}, #{settlementCurrencies}, #{bankAccountId},#{channelParamKeys},#{comments},
+				#{cardOrg}, #{createDate}, #{updateDate}, #{ownerId}, #{supportCardNoTrasmit}, #{support3D}, #{supportDCC},#{providerClassifier})
+	</insert>
+	
+	<sql id="defaultSelect">
+		SELECT  prod.provider_id, prod.provider_name, prod.txn_currencies, prod.settle_currencies, prod.bank_acc_id,
+				prod.card_org prod_card_org, prod.create_date prod_cr_dt, prod.update_date prod_up_dt,prod.owner_id prod_owner_id, acq_id,
+				support_card_no_transmit, support_3d, support_dcc, provider_classifier
+		 FROM channel_provider prod
+	</sql>
+	<select id="selectOne" parameterType="string" resultMap="channelProviderMap">
+		<include refid="defaultSelect" />
+		 	WHERE prod.provider_id = #{ID}
+	</select>
+	
+	<select id="selectBy" resultMap="channelProviderMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					acq_id = #{filterEntity.ID}
+				</if>
+				
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	<select id="selectAll" resultMap="channelProviderMap">
+		<include refid="defaultSelect" />
+	</select>
+
+	<sql id="defaultCount">
+		SELECT count(*) FROM channel_provider
+	</sql>
+	<select id="countBy"  resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					acq_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+	
+	
+	
+				
+	<update id="update" parameterType="ChannelProviderEntity" >
+		update channel_provider 
+	    <set>
+	       <if test="acquirerId != null">acq_id = #{acquirerId},</if>
+	      <if test="providerName != null">provider_name = #{providerName},</if>
+	      <if test="transactionCurrencies != null">txn_currencies = #{transactionCurrencies},</if>
+	      <if test="settlementCurrencies != null">settle_currencies = #{settlementCurrencies},</if>
+	      <if test="cardOrg != null">card_org = #{cardOrg},</if>
+	      <if test="createDate != null">create_date = #{createDate},</if>
+	      <if test="updateDate != null">update_date = #{updateDate},</if>
+	      <if test="ownerId != null">owner_id = #{ownerId},</if>
+	      <if test="supportCardNoTrasmit != null">support_card_no_transmit = #{supportCardNoTrasmit},</if>
+	      <if test="support3D != null">support_3d = #{support3D},</if>
+	      <if test="supportDCC != null">support_dcc = #{supportDCC},</if>
+	       <if test="providerClassifier != null">provider_classifier = #{providerClassifier},</if>
+	    </set>
+		where provider_id = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="string" >
+		DELETE FROM channel_provider WHERE provider_id = #{ID}
+	</delete>
+	
+
+</mapper>

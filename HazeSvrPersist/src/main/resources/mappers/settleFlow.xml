@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.settlement.SettleFlowMapper">
+
+	<resultMap id="settleFlowMap" type="SettleFlowEntity">
+		<id column="settle_flow_id" property="ID" />
+		<result column="mer_id" property="merOrder.merRef.merId" />
+		<result column="sub_mer_id" property="merOrder.merRef.subMerId" />
+		<result column="sales_id" property="merOrder.merRef.salesId" />
+		<result column="agent_id" property="merOrder.merRef.agentId" />
+		<result column="psp_id" property="merOrder.merRef.pspId" />
+		<result column="mer_amount" property="merOrder.amount" />
+		<result column="mer_currency" property="merOrder.currency" />
+		<result column="mer_order_id" property="merOrder.orderId" />
+		<result column="pay_summary_id" property="paymentSummaryId" />
+		<result column="pay_flow_id" property="payFlowId" />
+		<result column="channel_id" property="channelId" />
+		<result column="acq_id" property="acquirerId" />
+		<result column="bank_id" property="bankId" />
+		<result column="card_org" property="payCredential.cardOrg" />
+		<result column="encrypted_card_no" property="payCredential.encryptedCardNo" />
+		<result column="mask_card_no" property="payCredential.maskCardNo" />
+		<result column="virtual_account" property="payCredential.virtualAccount" />
+		<result column="txn_id" property="txnId" />
+		<result column="txn_type" property="bankOrder.txtType" />
+		<result column="txn_mer_id" property="bankOrder.merId" />
+		<result column="txn_sub_mer_id" property="bankOrder.subMerId" />
+		<result column="txn_order_id" property="bankOrder.orderId" />
+		<result column="txn_exchange_rate" property="bankOrder.exchangeRate" />
+		<result column="txn_amount" property="bankOrder.amount" />
+		<result column="txn_currency" property="bankOrder.currency" />
+		<result column="bank_flow_id" property="bankFlowId" />
+		<result column="pay_date" property="payDate" />
+		<result column="clearing_exchange_rate" property="clearingExchangeRate" />
+		<result column="clearing_amount" property="clearingAmount" />
+		<result column="clearing_currency" property="clearingCurrency" />
+		<result column="op_rate_classifier" property="opRateClassifier" />
+		<result column="op_exchange_rate" property="opExchangeRate" />
+		<result column="op_amount" property="opAmount" />
+		<result column="deposit_amount" property="depositAmount" />
+		<result column="schedule_batch_id" property="scheduleBatchId" />
+		<result column="clearing_date" property="clearingDate" />
+		<result column="clearing_status" property="clearingStatus" />
+		<result column="freeze_policy" property="freezePolicy" />
+		<result column="settle_date" property="settleDate" />
+		<result column="settle_status" property="settleStatus" />
+		<result column="settle_cond" property="settleCondition" />
+		<result column="delivery_date" property="deliveryDate" />
+		<result column="deposit_schedule_batch_id" property="depositScheduleBatchId" />
+		<result column="deposit_settle_date" property="depositSettleDate" />
+		<result column="deposit_settle_status" property="depositSettleStatus" />
+		<result column="sf_comments" property="comments" />
+		<result column="sf_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="sf_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+	
+	<insert id="insert" parameterType="SettleFlowEntity" >
+		INSERT INTO settle_flow 
+		(
+		settle_flow_id, 			mer_id, 					sub_mer_id, 			sales_id, 					agent_id,
+		psp_id, 					mer_amount, 				mer_currency, 			mer_order_id, 				pay_summary_id,
+		pay_flow_id, 				channel_id,					acq_id, 				bank_id,					card_org, 
+		encrypted_card_no,			mask_card_no,  				virtual_account, 		txn_id, 					txn_type, 	
+		txn_mer_id, 				txn_sub_mer_id, 			txn_order_id, 			txn_amount, 
+		txn_currency,				txn_exchange_rate, 			bank_flow_id, 			pay_date, 					clearing_exchange_rate, 
+		clearing_amount, 			clearing_currency, 			op_rate_classifier, 	op_exchange_rate, 			op_amount, 
+		deposit_amount, 			schedule_batch_id, 			clearing_date, 			clearing_status, 
+		freeze_policy, 				settle_date, 				settle_status, 			settle_cond, 				delivery_date, 
+		deposit_schedule_batch_id, 	deposit_settle_date, 		deposit_settle_status, 	comments, 					create_date, 
+		update_date
+		)
+		VALUES 
+		(
+		 #{ID}, 							#{merOrder.merRef.merId}, 	#{merOrder.merRef.subMerId},	#{merOrder.merRef.salesId}, 	#{merOrder.merRef.agentId}, 
+		 #{merOrder.merRef.pspId}, 			#{merOrder.amount}, 		#{merOrder.currency}, 			#{merOrder.orderId}, 			#{paymentSummaryId}, 
+		 #{payFlowId}, 						#{channelId}, 				#{acquirerId}, 					#{bankId}, 						#{payCredential.cardOrg}, 
+		 #{payCredential.encryptedCardNo}, 	#{payCredential.maskCardNo},#{payCredential.virtualAccount},#{txnId}, 						#{bankOrder.txtType}, 
+		 #{bankOrder.merId}, 				#{bankOrder.subMerId}, 		#{bankOrder.orderId}, 			#{bankOrder.amount}, 
+		 #{bankOrder.currency}, 			#{bankOrder.exchangeRate},  #{bankFlowId}, 					#{payDate}, 					#{clearingExchangeRate}, 
+		 #{clearingAmount}, 				#{clearingCurrency}, 		#{opRateClassifier}, 			#{opExchangeRate}, 				#{opAmount}, 
+		 #{depositAmount}, 					#{scheduleBatchId}, 		#{clearingDate}, 				#{clearingStatus}, 
+		 #{freezePolicy}, 					#{settleDate}, 				#{settleStatus}, 				#{settleCondition}, 			#{deliveryDate}, 
+		 #{depositScheduleBatchId}, 		#{depositSettleDate}, 		#{depositSettleStatus}, 		#{comments}, 					#{createDate}, 
+		 #{updateDate}
+		) 
+	</insert>
+
+	<sql id="defaultSelect">
+	SELECT  
+		sf.settle_flow_id, 				sf.mer_id, 						sf.sub_mer_id, 			sf.sales_id, 				sf.agent_id,
+		sf.psp_id, 						sf.mer_amount, 					sf.mer_currency, 		sf.mer_order_id, 			sf.pay_summary_id,
+		sf.pay_flow_id, 				sf.channel_id,					sf.acq_id, 				sf.bank_id,					sf.card_org, 
+		sf.encrypted_card_no,			sf.mask_card_no,  				sf.virtual_account, 	sf.txn_id, 					sf.txn_type, 	
+		sf.txn_mer_id, 					sf.txn_sub_mer_id, 				sf.txn_order_id, 		sf.txn_amount, 
+		sf.txn_currency,				sf.txn_exchange_rate, 			sf.bank_flow_id, 		sf.pay_date, 				sf.clearing_exchange_rate, 
+		sf.clearing_amount, 			sf.clearing_currency, 			sf.op_rate_classifier, 	sf.op_exchange_rate, 		sf.op_amount, 
+		sf.deposit_amount, 				sf.schedule_batch_id, 			sf.clearing_date, 		sf.clearing_status, 
+		sf.freeze_policy, 				sf.settle_date, 				sf.settle_status, 		sf.settle_cond, 			sf.delivery_date, 
+		sf.deposit_schedule_batch_id, 	sf.deposit_settle_date, 		sf.deposit_settle_status, sf.comments as sf_comments, sf.create_date as sf_cr_dt, 
+		sf.update_date as sf_up_dt
+	FROM settle_flow sf 
+	</sql>
+
+	<select id="selectOne" parameterType="string" resultMap="settleFlowMap">
+		<include refid="defaultSelect"/>
+		 WHERE sf.settle_flow_id = #{ID}
+	</select>
+	
+	<!-- need update -->
+	<select id="selectBy" resultMap="settleFlowMap">
+		<include refid="defaultSelect"/>
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					sf.settle_flow_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+		<if test="startIndex >= 0 and fetchRows > 0">
+			LIMIT #{startIndex}, #{fetchRows}
+		</if>
+	</select>
+	
+	<select id="selectAll" resultMap="settleFlowMap">
+		<include refid="defaultSelect" />
+	</select>
+	
+	<sql id="defaultCount">
+		SELECT count(*) FROM settle_flow sf 
+	</sql>
+	
+	<!-- need update -->
+	<select id="countBy" parameterType="string" resultType="int">
+		<include refid="defaultCount"/>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+
+	<update id="update" parameterType="SettleFlowEntity" >
+		update settle_flow 
+	    <set>
+	      	<if test="merOrder != null">
+				<if test="merOrder.merRef != null">
+					<if test="merOrder.merRef.merId !=null">mer_id = #{merOrder.merRef.merId},</if>
+					<if test="merOrder.merRef.subMerId !=null">sub_mer_id = #{merOrder.merRef.subMerId},</if>
+					<if test="merOrder.merRef.salesId != null">sales_id = #{merOrder.merRef.salesId},</if>
+					<if test="merOrder.merRef.agentId != null">agent_id = #{merOrder.merRef.agentId},</if>
+					<if test="merOrder.merRef.pspId != null">psp_id = #{merOrder.merRef.pspId},</if>
+				</if>
+				<if test="merOrder.amount != null">mer_amount = #{merOrder.amount},</if>
+				<if test="merOrder.currency != null">mer_currency = #{merOrder.currency},</if>
+				<if test="merOrder.orderId != null">mer_order_id = #{merOrder.orderId},</if>
+			</if>
+			<if test="paymentSummaryId != null">pay_summary_id = #{paymentSummaryId},</if>
+			<if test="payFlowId != null">pay_flow_id = #{payFlowId},</if>
+			<if test="channelId != null">acq_id = #{channelId},</if>
+			<if test="acquirerId != null">pay_flow_id = #{acquirerId},</if>
+			<if test="bankId != null">bank_id = #{bankId},</if>
+			<if test="payCredential != null">
+				<if test="payCredential.cardOrg != null">card_org = #{payCredential.cardOrg},</if>
+				<if test="payCredential.maskCardNo != null">mask_card_no = #{payCredential.maskCardNo},</if>
+				<if test="payCredential.encryptedCardNo != null">encrypted_card_no = #{payCredential.encryptedCardNo},</if>
+				<if test="payCredential.virtualAccount != null">virtual_account = #{payCredential.virtualAccount},</if>
+			</if>
+			<if test="txnId != null">txn_id = #{txnId},</if>
+			<if test="bankOrder != null">
+				<if test="bankOrder.txtType != null">txn_type = #{bankOrder.txtType},</if>
+				<if test="bankOrder.merId != null">txn_mer_id = #{bankOrder.merId},</if>
+				<if test="bankOrder.orderId != null">txn_order_id = #{bankOrder.orderId},</if>
+				<if test="bankOrder.amount != null">txn_amount = #{bankOrder.amount},</if>
+				<if test="bankOrder.currency != null">txn_currency = #{bankOrder.currency},</if>
+				<if test="bankOrder.exchangeRate != null">txn_exchange_rate = #{bankOrder.exchangeRate},</if>
+			</if>
+			<if test="bankFlowId != null">bank_flow_id = #{bankFlowId},</if>
+			<if test="payDate != null">pay_date = #{payDate},</if>
+			<if test="clearingExchangeRate != null">clearing_exchange_rate = #{clearingExchangeRate},</if>
+			<if test="clearingAmount != null">clearing_amount = #{clearingAmount},</if>
+			<if test="clearingCurrency != null">clearing_currency = #{clearingCurrency},</if>
+			<if test="opRateClassifier != null">op_rate_classifier = #{opRateClassifier},</if>
+			<if test="opExchangeRate != null">op_exchange_rate = #{opExchangeRate},</if>
+			<if test="opAmount != null">op_amount = #{opAmount},</if>
+			<if test="depositAmount != null">deposit_amount = #{depositAmount},</if>
+			<if test="scheduleBatchId != null">schedule_batch_id = #{scheduleBatchId},</if>
+			<if test="clearingDate != null">clearing_date = #{clearingDate},</if>
+			<if test="clearingStatus != null">clearing_status = #{clearingStatus},</if>
+			<if test="freezePolicy != null">freeze_policy = #{freezePolicy},</if>
+			<if test="settleDate != null">settle_date = #{settleDate},</if>
+			<if test="settleStatus != null">settle_status = #{settleStatus},</if>
+			<if test="settleCondition != null">settle_cond = #{settleCondition},</if>
+			<if test="deliveryDate != null">delivery_date = #{deliveryDate},</if>
+			<if test="depositScheduleBatchId != null">deposit_schedule_batch_id = #{depositScheduleBatchId},</if>
+			<if test="depositSettleDate != null">deposit_settle_date = #{depositSettleDate},</if>
+			<if test="depositSettleStatus != null">deposit_settle_status = #{depositSettleStatus},</if>
+			<if test="comments != null">comments = #{comments},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="updateDate != null">update_date = #{updateDate},</if>
+	    </set>
+		where settle_flow_id = #{ID}
+	</update>
+
+	<delete id="delete" parameterType="string" >
+		DELETE FROM settle_flow WHERE settle_flow_id = #{ID}
+	</delete>
+
+</mapper>

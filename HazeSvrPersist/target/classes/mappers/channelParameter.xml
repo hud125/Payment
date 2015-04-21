@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.configuration.channel.ChannelParameterMapper">
+
+	<!-- result maps -->
+	<resultMap id="channelParameterMap" type="ChannelParameterEntity">
+		<id column="channel_param_id" property="ID" />
+		<result column="channel_id" property="channelId" />
+		<result column="config_key" property="configKey" />
+		<result column="config_value" property="configValue" />
+	
+	</resultMap>
+
+	<insert id="insert" parameterType="ChannelParameterEntity" >
+		INSERT INTO channel_param 
+				(channel_param_id,  channel_id,  config_key, config_value)
+		VALUES (#{ID},  #{channelId},
+				#{configKey}, #{configValue})
+	</insert>
+
+	<sql id="defaultSelect">
+		SELECT  * FROM channel_param
+	</sql>
+	
+	<select id="selectOne" parameterType="string" resultMap="channelParameterMap">
+		<include refid="defaultSelect" /> WHERE channel_param_id = #{ID}
+	</select>
+	
+	<select id="selectByKeyAndChannelId" parameterType="string" resultMap="channelParameterMap">
+		<include refid="defaultSelect" /> WHERE config_key = #{configKey} and channel_id = #{channelId}
+	</select>
+
+	<select id="selectBy" resultMap="channelParameterMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					acq_id = #{filterEntity.ID}
+				</if>
+				
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	<select id="selectAll" resultMap="channelParameterMap">
+		<include refid="defaultSelect" />
+	</select>
+
+	<sql id="defaultCount">
+		SELECT count(*) FROM channel_param
+	</sql>
+	<select id="countBy"  resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					acq_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+
+	<update id="update" parameterType="ChannelParameterEntity" >
+		update channel_param 
+	    <set>
+	      <if test="channelId != null">channel_id = #{channelId},</if>
+	      <if test="configKey != null">config_key = #{configKey},</if>
+	      <if test="configValue != null">config_value = #{configValue},</if>
+	    </set>
+		where channel_param_id = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="string" >
+		DELETE FROM channel_param WHERE channel_param_id = #{ID}
+	</delete>
+	
+	<delete id="deleteByChannelId" parameterType="string" >
+		DELETE FROM channel_param WHERE channel_id = #{channelId}
+	</delete>
+	
+
+</mapper>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.infra.mer.MerchantMapper">
+
+	<!-- result maps -->
+	<resultMap id="merchantMap" type="MerchantEntity">
+		<id column="mer_id" property="ID" />
+		<result column="mer_name" property="name" />
+		<result column="mer_parent_id" property="parentID" />
+		<result column="mer_abbrev" property="abbreviation" />
+		<result column="mer_type" property="merchantType" />
+		<result column="federal_id" property="federalID" />
+		<result column="tax_id" property="taxID" />
+		<result column="txn_urls" property="transactionURLs" />
+		<result column="industry" property="industry" />
+		<result column="mcc" property="mcc" />
+		<result column="contact_person" property="contactPerson" />
+		<result column="contact_phone" property="contactPhone" />
+		<result column="contact_email" property="contactEmail" />
+		<result column="effective_date" property="effectiveDate" />
+		<result column="terminate_date" property="terminateDate" />
+		<result column="timezone" property="timeZone" />
+		<result column="timezone_name" property="timeZoneName" />
+		<result column="status" property="status" />
+		<result column="mer_comments" property="comments" />
+		<result column="mer_owner_id" property="ownerId" />
+		<result column="mer_code" property="merchantCode" />
+		<result column="mer_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="mer_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+		
+		<association property="addressBook" javaType="AddressBookEntity" resultMap="com.aurfy.haze.dao.infra.AddressBookMapper.addressBookMap" />
+		
+	</resultMap>
+
+	<!-- ID is string, and given by service -->
+	<insert id="insert" parameterType="MerchantEntity" >
+		INSERT INTO merchants 
+		(mer_id, mer_name, parent_id, abbrev, mer_type, federal_id, tax_id, txn_urls,
+		 industry, mcc, contact_person, contact_phone, contact_email, address_id, effective_date,
+		 terminate_date, timezone, timezone_name, comments, owner_id, create_date, update_date, status, mer_code)
+		VALUES 
+		(#{ID}, #{name}, #{parentID}, #{abbreviation}, #{merchantType}, #{federalID}, #{taxID}, #{transactionURLs}, #{industry}, 
+		#{mcc}, #{contactPerson}, #{contactPhone}, #{contactEmail}, #{addressBook.ID}, #{effectiveDate}, #{terminateDate}, 
+		#{timeZone}, #{timeZoneName}, #{comments}, #{ownerId}, #{createDate}, #{updateDate}, #{status}, #{merchantCode})
+	</insert>
+
+	<!-- unnecessary to select the country,state and city, so you can get them from address -->
+	<sql id="defaultSelect">
+	SELECT mer.mer_id, mer.mer_name, mer.parent_id mer_parent_id, mer.abbrev mer_abbrev, mer.mer_type, mer.federal_id, mer.tax_id, mer.txn_urls,
+		 mer.industry, mer.mcc, mer.contact_person, mer.contact_phone, mer.contact_email, mer.effective_date,
+		 mer.terminate_date, mer.timezone, mer.timezone_name, mer.comments mer_comments, mer.owner_id mer_owner_id, mer.status,mer.mer_code,
+		 mer.create_date mer_cr_dt, mer.update_date mer_up_dt,
+		addr.address_id, addr.zipcode, addr.street_name1, addr.street_name2, 
+		addr.string, addr.full_name, addr.phone_no, 
+		addr.owner_id addrbook_owner_id, addr.create_date addrbook_cr_dt, addr.update_date addrbook_up_dt,
+		addr.city_id, addr.city_name, addr.state_id, state_name, addr.country_id, addr.country_name, addr.country_code
+		 FROM merchants mer 
+		 	left join address_book addr on mer.address_id = addr.address_id
+	</sql>
+	<select id="selectOne" parameterType="string" resultMap="merchantMap">
+		<include refid="defaultSelect"/>
+		 WHERE mer.mer_id = #{ID}
+	</select>
+
+	<select id="selectBy" resultMap="merchantMap">
+		<include refid="defaultSelect"/>
+		<where>
+			<if test="filterEntity.name != null">
+				 mer.mer_name like #{filterEntity.name}
+			</if>
+			<if test="filterEntity.merchantCode != null">
+			 	and mer.mer_code = #{filterEntity.merchantCode}
+			 </if>
+		</where>
+		<if test="startIndex >= 0 and fetchRows > 0">
+			LIMIT #{startIndex}, #{fetchRows}
+		</if>
+	</select>
+
+	<select id="selectAll" resultMap="merchantMap">
+		<include refid="defaultSelect"/>
+	</select>
+
+	<sql id="defaultCount">
+		SELECT count(*)  FROM merchants mer 
+	</sql>
+
+	<select id="countBy" resultType="int">
+		<include refid="defaultCount"/>
+		<where>
+			<if test="filterEntity.name != null">
+				 mer.mer_name like #{filterEntity.name}
+			</if>
+		</where>
+	</select>
+
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+	
+	<update id="update" parameterType="MerchantEntity" >
+		update merchants 
+	    <set>
+	      <if test="name != null">mer_name = #{name},</if>
+	      <if test="merchantCode != null">mer_code = #{merchantCode},</if>
+	      <if test="parentID != null">parent_id = #{parentID},</if>
+	      <if test="abbreviation != null">abbrev = #{abbreviation},</if>
+	      <if test="merchantType != null">mer_type = #{merchantType},</if>
+	      <if test="federalID != null">federal_id = #{federalID},</if>
+	      <if test="taxID != null">tax_id = #{taxID},</if>
+	      <if test="transactionURLs != null">txn_urls = #{transactionURLs},</if>
+	      <if test="industry != null">industry = #{industry},</if>
+	      <if test="mcc != null">mcc = #{mcc},</if>
+	      <if test="contactPerson != null">contact_person = #{contactPerson},</if>
+	      <if test="contactPhone != null">contact_phone = #{contactPhone},</if>
+	      <if test="contactEmail != null">contact_email = #{contactEmail},</if>
+	      <if test="addressBook != null">address_id = #{addressBook.ID},</if>
+	      <if test="effectiveDate != null">effective_date = #{effectiveDate},</if>
+	      <if test="terminateDate != null">terminate_date = #{terminateDate},</if>
+	      <if test="timeZone != null">timezone = #{timeZone},</if>
+	      <if test="timeZoneName != null">timezone_name = #{timeZoneName},</if>
+	      <if test="comments != null">comments = #{comments},</if>
+	      <if test="ownerId != null">owner_id = #{ownerId},</if>
+	      <if test="createDate != null">create_date = #{createDate},</if>
+	      <if test="updateDate != null">update_date = #{updateDate},</if>
+	      <if test="status != null">status = #{status},</if>
+	    </set>
+		where mer_id = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="string" >
+		DELETE FROM merchants WHERE mer_id = #{ID}
+	</delete>
+	
+</mapper>

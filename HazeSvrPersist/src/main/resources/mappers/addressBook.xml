@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.infra.AddressBookMapper">
+
+	<!-- result maps -->
+	<resultMap id="addressBookMap" type="AddressBookEntity">
+		<id column="address_id" property="ID" />
+		<result column="zipcode" property="zipCode" />
+		<result column="street_name1" property="streetName1" />
+		<result column="street_name2" property="streetName2" />
+		<result column="string" property="string" />
+		<result column="full_name" property="fullName" />
+		<result column="phone_no" property="phoneNumber" />
+		<result column="addrbook_owner_id" property="ownerId" />
+		<result column="addrbook_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="addrbook_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+		
+		<association property="country" javaType="CountryEntity" resultMap="com.aurfy.haze.dao.infra.CountryMapper.countryMap" />
+		<association property="state" javaType="StateProvEntity" resultMap="com.aurfy.haze.dao.infra.StateProvMapper.stateProvMap" />
+		<association property="city" javaType="CityEntity" resultMap="com.aurfy.haze.dao.infra.CityMapper.cityMap" />
+	</resultMap>
+
+	<insert id="insert" parameterType="AddressBookEntity" >
+		INSERT INTO address_book 
+		(address_id, country_id, country_name, country_code, 
+		state_id, state_name, city_id, city_name, 
+		zipcode, street_name1, street_name2, string, 
+		full_name, phone_no, owner_id, create_date, update_date)
+		VALUES 
+		(#{ID}, #{country.ID}, #{country.name}, #{country.countryCode}, 
+		#{state.ID}, #{state.name}, #{city.ID}, #{city.name}, 
+		#{zipCode}, #{streetName1}, #{streetName2}, #{string}, 
+		#{fullName}, #{phoneNumber}, #{ownerId}, #{createDate}, #{updateDate})
+	</insert>
+	
+	<sql id="defaultSelect">
+		SELECT  addr.address_id, addr.zipcode, addr.street_name1, addr.street_name2, 
+				addr.string, addr.full_name, addr.phone_no, 
+				addr.owner_id addrbook_owner_id, addr.create_date addrbook_cr_dt, addr.update_date addrbook_up_dt,
+				ci.city_id, ci.city_name, ci.create_date city_cr_dt, ci.update_date city_up_dt,
+			   	sp.state_id, sp.state_name, sp.create_date state_cr_dt, sp.update_date state_up_dt,
+			   	co.country_id, co.country_name, co.abbrev country_abbrev, 
+			   	co.country_code, co.create_date country_cr_dt, co.update_date country_up_dt
+		FROM address_book addr 
+		 	left join country co on addr.country_id = co.country_id
+		 	left join state_province sp on sp.state_id = addr.state_id
+		 	left join city ci on ci.city_id = addr.city_id
+	</sql>
+	
+	<select id="selectOne" parameterType="string" resultMap="addressBookMap">
+		<include refid="defaultSelect"/>
+		WHERE addr.address_id = #{ID}
+	</select>
+	
+	<select id="selectBy" resultMap="addressBookMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.ID != null">
+					addr.address_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.country != null">
+					<if test="filterEntity.country != null">
+						AND addr.country_id = #{filterEntity.country.ID}
+					</if>
+					<if test="filterEntity.country != null">
+						AND addr.country_name = #{filterEntity.country.name}
+					</if>
+					<if test="filterEntity.country != null">
+						AND addr.country_code = #{filterEntity.country.countryCode}
+					</if>
+				</if>
+				<if test="filterEntity.state != null">
+					<if test="filterEntity.state != null">
+						AND addr.state_id = #{filterEntity.state.ID}
+					</if>
+					<if test="filterEntity.state != null">
+						AND addr.state_name = #{filterEntity.state.name}
+					</if>
+				</if>
+				<if test="filterEntity.city != null">
+					<if test="filterEntity.city != null">
+						AND addr.city_id = #{filterEntity.city.ID}
+					</if>
+					<if test="filterEntity.city != null">
+						AND addr.city_name = #{filterEntity.city.name}
+					</if>
+				</if>
+				<if test="filterEntity.zipCode != null">
+					AND addr.zipcode = #{filterEntity.zipCode}
+				</if>
+				<if test="filterEntity.streetName1 != null">
+					AND addr.street_name1 = #{filterEntity.streetName1}
+				</if>
+				<if test="filterEntity.streetName2 != null">
+					AND addr.street_name2 = #{filterEntity.streetName2}
+				</if>
+				<if test="filterEntity.string != null">
+					AND addr.string = #{filterEntity.string}
+				</if>
+				<if test="filterEntity.fullName != null">
+					AND addr.full_name = #{filterEntity.fullName}
+				</if>
+				<if test="filterEntity.phoneNumber != null">
+					AND addr.phone_no = #{filterEntity.phoneNumber}
+				</if>
+				<if test="filterEntity.ownerId != null">
+					AND addr.owner_id = #{filterEntity.ownerId}
+				</if>
+				<if test="filterEntity.createDate != null">
+					AND addr.create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate != null">
+					AND addr.update_date = #{filterEntity.updateDate}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+
+	<select id="selectAll" resultMap="addressBookMap">
+		<include refid="defaultSelect"/>
+	</select>
+
+	<sql id="defaultCount">
+		SELECT count(*) FROM address_book addr 
+	</sql>
+	
+	<select id="countBy" parameterType="AddressBookEntity" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.country != null">
+					<if test="filterEntity.country.ID != null">
+						AND addr.country_id = #{filterEntity.country.ID}
+					</if>
+					<if test="filterEntity.country.name != null">
+						AND addr.country_name = #{filterEntity.country.name}
+					</if>
+					<if test="filterEntity.country.countryCode != null">
+						AND addr.country_code = #{filterEntity.country.countryCode}
+					</if>
+				</if>
+				<if test="filterEntity.state != null">
+					<if test="filterEntity.state.ID != null">
+						AND addr.state_id = #{filterEntity.state.ID}
+					</if>
+					<if test="filterEntity.state.name != null">
+						AND addr.state_name = #{filterEntity.state.name}
+					</if>
+				</if>
+				<if test="filterEntity.city != null">
+					<if test="filterEntity.city.ID != null">
+						AND addr.city_id = #{filterEntity.city.ID}
+					</if>
+					<if test="filterEntity.city.name != null">
+						AND addr.city_name = #{filterEntity.city.name}
+					</if>
+				</if>
+				<if test="filterEntity.zipCode != null">
+					AND addr.zipcode = #{filterEntity.zipCode}
+				</if>
+				<if test="filterEntity.streetName1 != null">
+					AND addr.street_name1 = #{filterEntity.streetName1}
+				</if>
+				<if test="filterEntity.streetName2 != null">
+					AND addr.street_name2 = #{filterEntity.streetName2}
+				</if>
+				<if test="filterEntity.string != null">
+					AND addr.string = #{filterEntity.string}
+				</if>
+				<if test="filterEntity.fullName != null">
+					AND addr.full_name = #{filterEntity.fullName}
+				</if>
+				<if test="filterEntity.phoneNumber != null">
+					AND addr.phone_no = #{filterEntity.phoneNumber}
+				</if>
+				<if test="filterEntity.ownerId != null">
+					AND addr.owner_id = #{filterEntity.ownerId}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+	
+	<update id="update" parameterType="AddressBookEntity" >
+		update address_book  
+	    <set>
+	      <if test="country != null">country_id = #{country.ID},</if>
+	      <if test="country != null">country_name = #{country.name},</if>
+	      <if test="country != null">country_code = #{country.countryCode},</if>
+	      <if test="state != null">state_id = #{state.ID},</if>
+	      <if test="state != null">state_name = #{state.name},</if>
+	      <if test="city != null">city_id = #{city.ID},</if>
+	      <if test="city != null">city_name = #{city.name},</if>
+	      <if test="zipCode != null">zipcode = #{zipCode},</if>
+	      <if test="streetName1 != null">street_name1 = #{streetName1},</if>
+	      <if test="streetName2 != null">street_name2 = #{streetName2},</if>
+	      <if test="string != null">string = #{string},</if>
+	      <if test="fullName != null">full_name = #{fullName},</if>
+	      <if test="phoneNumber != null">phone_no = #{phoneNumber},</if>
+	      <if test="ownerId != null">owner_id = #{ownerId},</if>
+	      <if test="createDate != null">create_date = #{createDate},</if>
+	      <if test="updateDate != null">update_date = #{updateDate},</if>
+	    </set>
+		where address_id = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="string" >
+		DELETE FROM address_book WHERE address_id = #{ID}
+	</delete>
+	
+
+</mapper>

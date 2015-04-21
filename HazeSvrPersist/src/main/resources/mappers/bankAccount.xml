@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.configuration.channel.BankAccountMapper">
+
+	<!-- result maps -->
+	<resultMap id="bankAccountMap" type="BankAccountEntity">
+		<id column="bank_acc_id" property="ID" />
+		<result column="acc_bank_code" property="bankCode" />
+		<result column="acc_bank_abbr" property="bankAbbreviation" />
+		<result column="acc_bank_name" property="bankName" />
+		<result column="acc_bank_branch" property="bankBranch" />
+		<result column="acc_bank_url" property="bankURL" />
+		
+		<result column="acc_holder" property="accountHolder" />
+		<result column="acc_no" property="accountNumber" />
+		<result column="acc_currency" property="accountCurrency" />
+		<result column="routing_transit_number" property="routingTransitNumber" />
+		<result column="swift_code" property="swiftCode" />
+		<result column="acc_open_date" property="accountOpenDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="acc_comments" property="comments" />
+		<result column="acc_owner_id" property="ownerId" />
+		<result column="acc_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="acc_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+		
+		<result column="bank_id" property="bankId"  />
+		<association property="addressBook" javaType="AddressBookEntity" resultMap="com.aurfy.haze.dao.infra.AddressBookMapper.addressBookMap" />
+	</resultMap>
+
+	<insert id="insert" parameterType="BankAccountEntity" >
+		INSERT INTO bank_acc 
+				(bank_acc_id, bank_id, bank_code, bank_abbr, bank_name, bank_branch, bank_url, address_id,
+				acc_holder, acc_no, acc_currency, routing_transit_number, swift_code, acc_open_date, 
+				comments, owner_id, create_date, update_date)
+		VALUES (#{ID}, #{bankId}, #{bankCode}, #{bankAbbreviation}, #{bankName}, #{bankBranch}, #{bankURL}, #{addressBook.ID},
+				#{accountHolder}, #{accountNumber}, #{accountCurrency}, 
+				#{routingTransitNumber}, #{swiftCode}, #{accountOpenDate},
+				#{comments}, #{ownerId}, #{createDate}, #{updateDate})
+	</insert>
+	
+	<sql id="defaultSelect">
+		SELECT  acc.bank_acc_id, acc.bank_code acc_bank_code, acc.bank_abbr acc_bank_abbr, acc.bank_name acc_bank_name, 
+				acc.bank_branch acc_bank_branch, acc.bank_url acc_bank_url,
+				acc.acc_holder, acc.acc_no, acc.acc_currency, 
+				acc.routing_transit_number, acc.swift_code, acc.acc_open_date, 
+				acc.comments acc_comments, acc.owner_id acc_owner_id, 
+				acc.create_date acc_cr_dt, acc.update_date acc_up_dt, acc.bank_id,
+				addr.address_id, addr.zipcode, addr.street_name1, addr.street_name2, 
+				addr.string, addr.full_name, addr.phone_no, 
+				addr.owner_id addrbook_owner_id, addr.create_date addrbook_cr_dt, addr.update_date addrbook_up_dt,
+				addr.city_id, addr.city_name, addr.state_id, state_name, addr.country_id, addr.country_name, addr.country_code
+		 FROM bank_acc acc 
+		        LEFT JOIN address_book addr on acc.address_id = addr.address_id
+	</sql>
+	
+	<select id="selectOne" parameterType="string" resultMap="bankAccountMap">
+		<include refid="defaultSelect" />
+		 	WHERE acc.bank_acc_id = #{ID}
+	</select>
+	
+	
+	<select id="selectBy" resultMap="bankAccountMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					bank_acc_id = #{filterEntity.ID}
+				</if>
+				
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	
+	<select id="selectAll" resultMap="bankAccountMap">
+		<include refid="defaultSelect" />
+	</select>
+
+	<sql id="defaultCount">
+		SELECT count(*) FROM bank_acc
+	</sql>
+	<select id="countBy"  resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					bank_acc_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+	
+	<update id="update" parameterType="BankAccountEntity" >
+		update bank_acc 
+	    <set>
+	      <if test="bankId != null">bank_id = #{bankId},</if>
+	      <if test="bankCode != null">bank_code = #{bankCode},</if>
+	      <if test="bankAbbreviation != null">bank_abbr = #{bankAbbreviation},</if>
+	      <if test="bankName != null">bank_name = #{bankName},</if>
+	      <if test="bankBranch != null">bank_branch = #{bankBranch},</if>
+	      <if test="bankURL != null">bank_url = #{bankURL},</if>
+	      <if test="accountHolder != null">acc_holder = #{accountHolder},</if>
+	      <if test="accountNumber != null">acc_no = #{accountNumber},</if>
+	      <if test="accountCurrency != null">acc_currency = #{accountCurrency},</if>
+	      <if test="routingTransitNumber != null">routing_transit_number = #{routingTransitNumber},</if>
+	      <if test="swiftCode != null">swift_code = #{swiftCode},</if>
+	      <if test="accountOpenDate != null">acc_open_date = #{accountOpenDate},</if>
+	      <if test="comments != null">comments = #{comments},</if>
+	      <if test="ownerId != null">owner_id = #{ownerId},</if>
+	      <if test="createDate != null">create_date = #{createDate},</if>
+	      <if test="updateDate != null">update_date = #{updateDate},</if>
+	      <if test="addressBook != null">address_id = #{addressBook.ID},</if>
+	    </set>
+		where bank_acc_id = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="string" >
+		DELETE FROM bank_acc WHERE bank_acc_id = #{ID}
+	</delete>
+	
+
+</mapper>

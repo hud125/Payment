@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->
+    <!-- BEGIN HEAD -->
+    <head>
+        <meta charset="utf-8" />
+        <title>Aurfy-Login</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        <!-- BEGIN GLOBAL MANDATORY STYLES -->
+        #parse("common.vm")
+        <!-- END GLOBAL MANDATORY STYLES -->
+        <!-- BEGIN PAGE LEVEL STYLES -->
+        <link href="$!{rc.contextPath}/skin/css/login-soft.css" rel="stylesheet" type="text/css"/>
+        <!-- END PAGE LEVEL STYLES -->
+    </head>
+    <!-- END HEAD -->
+    <!-- BEGIN BODY -->
+    <body class="login">
+        <!-- BEGIN LOGO -->
+        <div class="logo">
+            <img src="$!{rc.contextPath}/skin/image/logo.png" alt="logo"  height="50px" width="100px;" background="white"/>
+        </div>
+        <!-- END LOGO -->
+        <!-- BEGIN LOGIN -->
+        <div class="content">
+            <!-- BEGIN LOGIN FORM -->
+           <form id="frmLogin" name="frmLogin" method="post" action = "$!{rc.contextPath}/login">
+                <h3 class="form-title">Login to your account</h3>
+				
+				#springBind("userLoginRequest.*")
+                <div class="alert alert-error hide" #if($status.errorMessage != "") style="display: block;" #end>
+                    <button class="close" data-dismiss="alert"></button>
+                    <span>$status.errorMessage</span>
+                </div>
+				
+                <div class="control-group">
+                    <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+					
+                    <label class="control-label visible-ie8 visible-ie9">Username</label>
+                    <div class="controls">
+                        <div class="input-icon left">
+                            <i class="icon-user"></i>
+                            <input class="m-wrap placeholder-no-fix" type="text" placeholder="Username" name="username" />
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label visible-ie8 visible-ie9">Password</label>
+                    <div class="controls">
+                        <div class="input-icon left">
+                            <i class="icon-lock"></i>
+                            <input class="m-wrap placeholder-no-fix" type="password" placeholder="Password" name="password"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    
+                    <button type="submit" class="btn blue pull-right">
+                        Login <i class="m-icon-swapright m-icon-white"></i>
+                    </button>
+                </div>
+				
+                <div class="forget-password">
+                    <h4>Forgot your password ?</h4>
+                    <p>
+                        no worries, click <a href="$!rc.contextPath/user/getBackPassWord" class="" id="forget-password">here</a>
+                        to reset your password.
+                    </p>
+                </div>
+                <div class="create-account">
+                    <p>
+                        Don't have an account yet ?&nbsp; 
+                        <a href="$!rc.contextPath/user/application" id="register-btn" class="">Create an account</a>
+</p>
+</div>
+</form>
+<!-- END LOGIN FORM -->        
+
+</div>
+<!-- END LOGIN -->
+<!-- BEGIN COPYRIGHT -->
+<div class="copyright">
+    2015 Copyright &copy; Aurfy
+</div>
+</body>
+</html>

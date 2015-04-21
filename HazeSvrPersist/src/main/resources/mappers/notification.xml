@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.infra.NotificationMapper">
+
+	<resultMap id="notificationMap" type="NotificationEntity">
+		<id column="notification_id" property="ID" />
+		<result column="target_url" property="targetURL" />
+		<result column="http_method" property="httpMethod" />
+		<result column="json_msg" property="jsonMsg" />
+		<result column="max_counter" property="maxCounter" />
+		<result column="retry_counter" property="retryCounter" />
+		<result column="delivery_status" property="deliveryStatus" />
+		<result column="http_status" property="httpStatus" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+
+	<insert id="insert" parameterType="NotificationEntity">
+		INSERT INTO notification
+		(notification_id, target_url, http_method, json_msg,
+		max_counter, retry_counter, delivery_status, http_status, create_date, update_date)
+		VALUES
+		(#{ID}, #{targetURL},
+		#{httpMethod}, #{jsonMsg}, #{maxCounter}, #{retryCounter},#{deliveryStatus}, #{httpStatus}, #{createDate},
+		#{updateDate})
+	</insert>
+
+	<sql id="defaultSelect">
+		SELECT
+		no.notification_id, no.target_url, no.http_method, no.json_msg, no.max_counter, no.retry_counter,
+		no.delivery_status, no.http_status,
+		no.create_date, no.update_date
+		FROM notification no
+	</sql>
+	<select id="selectOne" parameterType="string" resultMap="notificationMap">
+		<include refid="defaultSelect" />
+		WHERE no.notification_id = #{ID}
+	</select>
+	<select id="selectNotifiableItems" resultMap="notificationMap">
+		<include refid="defaultSelect" />
+		<![CDATA[
+		WHERE no.retry_counter < no.max_counter AND (no.delivery_status is NULL OR no.delivery_status = 2)
+		]]>
+	</select>
+	<select id="selectBy" resultMap="notificationMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					notification_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.targetURL!=null">
+					AND target_url = #{filterEntity.targetURL}
+				</if>
+				<if test="filterEntity.httpMethod!=null">
+					AND http_method = #{filterEntity.httpMethod}
+				</if>
+				<if test="filterEntity.jsonMsg!=null">
+					AND json_msg = #{filterEntity.jsonMsg}
+				</if>
+				<if test="filterEntity.maxCounter!=null">
+					AND max_counter = #{filterEntity.maxCounter}
+				</if>
+				<if test="filterEntity.retryCounter!=null">
+					AND retry_counter = #{filterEntity.retryCounter}
+				</if>
+				<if test="filterEntity.deliveryStatus!=null">
+					AND delivery_status = #{filterEntity.deliveryStatus}
+				</if>
+				<if test="filterEntity.httpStatus!=null">
+					AND http_status = #{filterEntity.httpStatus}
+				</if>
+				<if test="filterEntity.createDate !=null">
+					AND create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate !=null">
+					AND update_date = #{filterEntity.updateDate}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+
+	<select id="selectAll" resultMap="notificationMap">
+		<include refid="defaultSelect" />
+	</select>
+
+
+	<sql id="defaultCount">
+		SELECT count(*) FROM notification
+	</sql>
+	<select id="countBy" parameterType="NotificationEntity" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.targetURL != null">
+					target_url like #{filterEntity.targetURL}
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+
+	<update id="update" parameterType="NotificationEntity">
+		UPDATE notification
+		<set>
+			<if test="targetURL != null">target_url = #{targetURL},</if>
+			<if test="httpMethod != null">http_method = #{httpMethod},</if>
+			<if test="jsonMsg != null">json_msg = #{jsonMsg},</if>
+			<if test="maxCounter != null">max_counter = #{maxCounter},</if>
+			<if test="retryCounter != null">retry_counter = #{retryCounter},</if>
+			delivery_status = #{deliveryStatus},
+			http_status = #{httpStatus},
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="createDate != null">update_date = #{updateDate},</if>
+		</set>
+		WHERE notification_id = #{ID}
+	</update>
+
+	<delete id="delete" parameterType="string">
+		DELETE FROM notification WHERE notification_id = #{ID}
+	</delete>
+
+</mapper>

@@ -1,0 +1,16 @@
+@echo off
+
+REM set ANT_HOME=D:\install\Ant
+
+SET START_DIR=%cd%
+SET WORK_DIR=%START_DIR%\..
+SET DIST_DIR=%WORK_DIR%\dist
+
+SET SHARPEN_DIR=%WORK_DIR%\HazeSvrAPI\bin
+
+SET PATH=%PATH%;%ANT_HOME%\bin;%WORK_DIR%
+
+SET APP_VERSION=1.0.0
+
+SET PROFILE=intranet
+REM SET PROFILE=internet

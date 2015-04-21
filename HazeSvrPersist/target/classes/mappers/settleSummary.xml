@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.infra.SettleSummaryMapper">
+
+	<resultMap type="SettleSummaryEntity" id="settleSummaryMap">
+		<id property="ID" column="settle_summary_id"/>
+		<result property="scheduleBatchID" column="schedule_batch_id"/>
+		<result column="settle_date" property="settleDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result property="merchantID" column="mer_id"/>
+		<result property="merSubID" column="sub_mer_id"/>
+		<result property="settleCurrency" column="settle_currency"/>
+		<result property="incomeAmount" column="income_amount"/>
+		<result property="operationAmount" column="operation_amount"/>
+		<result property="depositAmount" column="deposit_amount"/>
+		<result property="returnDepositAmount" column="return_deposit_amount"/>
+		<result property="freezeAmount" column="freeze_amount"/>
+		<result property="unfreezeAmount" column="unfreeze_amount"/>
+		<result property="balanceAmount" column="balance_amount"/>
+		<result property="comments" column="comments"/>
+		<result column="sett_sum_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="sett_sum_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+	<insert id="insert" parameterType="SettleSummaryEntity">
+		INSERT INTO settle_summary
+		(settle_summary_id, schedule_batch_id, settle_date, mer_id, sub_mer_id, settle_currency, 
+		income_amount, operation_amount, deposit_amount, return_deposit_amount, freeze_amount, unfreeze_amount, balance_amount, comments, create_date, update_date)
+		VALUES (#{ID}, #{scheduleBatchID}, #{settleDate}, #{merchantID}, #{merSubID}, #{settleCurrency}, 
+		 #{incomeAmount}, #{operationAmount}, #{depositAmount}, #{returnDepositAmount}, #{freezeAmount}, #{unfreezeAmount}, #{balanceAmount}, #{comments}, #{createDate}, #{updateDate})
+	</insert>
+	<delete id="delete" parameterType="string">
+		DELETE FROM settle_summary WHERE settle_summary_id = #{ID}
+	</delete>
+	<sql id="defaultSelect">
+		SELECT settle_summary_id, schedule_batch_id, settle_date, mer_id, sub_mer_id, settle_currency, 
+		income_amount, operation_amount, deposit_amount, return_deposit_amount, freeze_amount, unfreeze_amount,
+	balance_amount, comments, create_date sett_sum_cr_dt, update_date sett_sum_up_dt
+		FROM settle_summary
+	</sql>
+	<select id="selectOne" parameterType="string" resultMap="settleSummaryMap">
+		<include refid="defaultSelect"/>
+		WHERE settle_summary_id = #{ID}
+	</select>
+	<select id="selectBy" resultMap="settleSummaryMap">
+		<include refid="defaultSelect"/>
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					settle_summary_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	<select id="selectAll" resultMap="settleSummaryMap">
+		<include refid="defaultSelect"/>
+	</select>
+	<sql id="defaultCount">
+		SELECT count(*) FROM settle_summary
+	</sql>
+	<select id="countBy" resultType="int">
+		<include refid="defaultCount"/>
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					settle_summary_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount"/>
+	</select>
+	<update id="update" parameterType="SettleSummaryEntity">
+		UPDATE settle_summary
+		<set>
+			<if test="scheduleBatchID != null">schedule_batch_id = #{scheduleBatchID},</if>
+			<if test="settleDate != null">settle_date = #{settleDate},</if>
+			<if test="merchantID != null">mer_id = #{merchantID},</if>
+			<if test="merSubID != null">sub_mer_id = #{merSubID},</if>
+			<if test="settleCurrency != null">settle_currency = #{settleCurrency},</if>
+			<if test="incomeAmount != null">income_amount = #{incomeAmount},</if>
+			<if test="operationAmount != null">operation_amount = #{operationAmount},</if>
+			<if test="depositAmount != null">deposit_amount = #{depositAmount},</if>
+			<if test="returnDepositAmount != null">return_deposit_amount = #{returnDepositAmount},</if>
+			<if test="freezeAmount != null">freeze_amount = #{freezeAmount},</if>
+			<if test="unfreezeAmount != null">unfreeze_amount = #{unfreezeAmount},</if>
+			<if test="balanceAmount != null">balance_amount = #{balanceAmount},</if>
+			<if test="comments != null">comments = #{comments},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="updateDate != null">update_date = #{updateDate},</if>
+		</set>
+		WHERE settle_summary_id = #{ID}
+	</update>
+</mapper>

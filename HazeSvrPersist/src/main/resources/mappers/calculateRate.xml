@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.configuration.rate.CalculateRateMapper">
+
+	<!-- result maps -->
+	<resultMap id="calculateRateMap" type="CalculateRateEntity">
+		<id column="calculation_rate_id" property="ID" />
+		<result column="cr_card_org" property="cardOrg" />
+		<result column="cr_currency" property="currency" />
+		<result column="cr_rate_classifier" property="rateClassifier" />
+		<result column="cr_rate_algorithm" property="rateAlgorithm" />
+		<result column="cr_percentage" property="percentage" />
+		<result column="cr_fixed_amount" property="fixedAmount" />
+		<result column="cr_min_amount" property="minAmount" />
+		<result column="cr_max_amount" property="maxAmount" />
+		<result column="ext1" property="extend1" />
+		<result column="ext2" property="extend2" />
+		<result column="ext3" property="extend3" />
+		<result column="cr_comments" property="comments" />
+		<result column="cr_owner_id" property="ownerId" />
+		<result column="cr_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="cr_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+
+	<insert id="insert" parameterType="CalculateRateEntity" >
+		INSERT INTO calculation_rate 
+				(
+				calculation_rate_id, card_org, currency, rate_classifier, 
+				rate_algorithm, percentage, fixed_amount, 
+				min_amount, max_amount, ext1, ext2, ext3, 
+				comments, owner_id, 
+				create_date, update_date)
+		VALUES (
+				#{ID}, #{cardOrg}, #{currency}, #{rateClassifier}, 
+				#{rateAlgorithm}, #{percentage}, #{fixedAmount}, 
+				#{minAmount}, #{maxAmount}, #{extend1}, #{extend2}, #{extend3}, 
+				#{comments}, #{ownerId}, 
+				#{createDate}, #{updateDate})
+	</insert>
+
+	<sql id="defaultSelect">
+		SELECT 	cr.calculation_rate_id, cr.card_org cr_card_org, cr.currency cr_currency, 
+				cr.rate_classifier cr_rate_classifier, cr.rate_algorithm cr_rate_algorithm, 
+				cr.percentage cr_percentage, cr.fixed_amount cr_fixed_amount, 
+				cr.min_amount cr_min_amount, cr.max_amount cr_max_amount, 
+				cr.ext1, cr.ext2, cr.ext3, 
+				cr.comments cr_comments, cr.owner_id cr_owner_id, 
+				cr.create_date cr_cr_dt, cr.update_date cr_up_dt
+		FROM calculation_rate cr
+	</sql>
+	
+	<select id="selectOne" parameterType="string" resultMap="calculateRateMap">
+		<include refid="defaultSelect" />
+		 WHERE cr.calculation_rate_id = #{ID}
+	</select>
+	
+	<select id="selectBy" resultMap="calculateRateMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					cr.calculation_rate_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	
+	<select id="selectAll" resultMap="calculateRateMap">
+		<include refid="defaultSelect" />
+	</select>
+
+	<sql id="defaultCount">
+		SELECT count(*) FROM calculation_rate cr
+	</sql>
+	
+	<select id="countBy"  resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					cr.calculation_rate_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+
+	<update id="update" parameterType="CalculateRateEntity" >
+		update calculation_rate  
+	    <set>
+	      <if test="cardOrg != null">card_org = #{cardOrg},</if>
+	      <if test="currency != null">currency = #{currency},</if>
+	      <if test="rateClassifier != null">rate_classifier = #{rateClassifier},</if>
+	      <if test="rateAlgorithm != null">rate_algorithm = #{rateAlgorithm},</if>
+	      <if test="percentage != null">percentage = #{percentage},</if>
+	      <if test="fixedAmount != null">fixed_amount = #{fixedAmount},</if>
+	      <if test="minAmount != null">min_amount = #{minAmount},</if>
+	      <if test="maxAmount != null">max_amount = #{maxAmount},</if>
+	      <if test="extend1 != null">ext1 = #{extend1},</if>
+	      <if test="extend2 != null">ext2 = #{extend2},</if>
+	      <if test="extend3 != null">ext3 = #{extend3},</if>
+	      <if test="comments != null">comments = #{comments},</if>
+	      <if test="ownerId != null">owner_id = #{ownerId},</if>
+	      <if test="createDate != null">create_date = #{createDate},</if>
+	      <if test="updateDate != null">update_date = #{updateDate},</if>
+	    </set>
+		where calculation_rate_id = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="string" >
+		DELETE FROM calculation_rate WHERE calculation_rate_id = #{ID}
+	</delete>
+
+</mapper>

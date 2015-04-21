@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.configuration.channel.ChannelMappingMapper">
+
+	<!-- result maps -->
+	<resultMap id="channelMappingMap" type="ChannelMappingEntity">
+		<id column="mapping_id" property="ID" />
+		<result column="mer_id" property="merId" />
+		<result column="channel_id" property="channelId" />
+		<result column="default_channel" property="defaultChannel" />
+	</resultMap>
+
+	<insert id="insert" parameterType="ChannelMappingEntity">
+		INSERT INTO channel_mapping
+		(mapping_id, mer_id, channel_id, default_channel)
+		VALUES (#{ID}, #{merId}, #{channelId}, #{defaultChannel})
+	</insert>
+
+	<sql id="defaultSelect">
+		SELECT * FROM channel_mapping
+	</sql>
+
+	<select id="selectOne" parameterType="string" resultMap="channelMappingMap">
+		<include refid="defaultSelect" />
+		WHERE mapping_id = #{ID}
+	</select>
+
+	<select id="selectByMerAndChannel" resultMap="channelMappingMap">
+		<include refid="defaultSelect" />
+		WHERE mer_id = #{merId} AND channel_id = #{channelId}
+	</select>
+
+	<update id="emptyDefaultChannel">
+		UPDATE channel_mapping SET default_channel = 0
+		WHERE mer_id = #{merId}
+	</update>
+
+	<update id="setChannelProperty">
+		UPDATE channel_mapping SET default_channel = #{defaultChannel}
+		WHERE mer_id = #{merId} AND channel_id
+		= #{channelId}
+	</update>
+
+	<delete id="deleteByChannel" parameterType="string">
+		DELETE FROM channel_mapping WHERE channel_id = #{channelId}
+	</delete>
+
+</mapper>

@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project name="Db4objects.Db4odoc" default="sharpen-docs">
+	<property file="sharpen.properties" />
+
+	<macrodef name="reset-dir">
+		<attribute name="dir" />
+		<sequential>
+			<delete dir="@{dir}" />
+			<mkdir dir="@{dir}" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="sharpen">
+		<attribute name="workspace" />
+		<attribute name="resource" />
+
+		<element name="args" optional="yes" />
+
+		<sequential>
+			<exec executable="${file.jvm.jdk1.5}" failonerror="true" timeout="1800000">
+				<arg value="-Xms256m" />
+				<arg value="-Xmx1024m" />
+				<arg value="-cp" />
+				<arg value="${eclipse.startup.jar}" />
+				<arg value="org.eclipse.core.launcher.Main" />
+				<arg value="-data" />
+				<arg file="@{workspace}" />
+				<arg value="-application" />
+				<arg value="sharpen.core.application" />
+				<arg value="-header" />
+				<arg file="header.txt" />
+				<arg value="@{resource}" />
+
+				<args />
+
+			</exec>
+		</sequential>
+	</macrodef>
+
+
+	<!-- Main target -->
+	<target name="sharpen-docs" depends="clean">
+
+		<property name="target.dir" location="sharpen" />
+
+		<!-- Copy java files to the resource folder -->
+		<copy todir="${target.dir}/sharpened/src" encoding="UTF-8" outputencoding="GBK">
+
+			<!-- CHECK THIS SETTING 
+	  	   Make sure that the fileset dir below points to the root folder 
+	       containing the Java source code files you want to convert to C#
+	  -->
+			<fileset dir="../src/main/java">
+				<include name="**/*.java" />
+			</fileset>
+
+			<fileset dir="../../HazeCore/src/main/java">
+				<include name="**/*.java" />
+			</fileset>
+		</copy>
+
+		<!-- Sharpen java files -->
+		<sharpen workspace="${target.dir}" resource="sharpened/src">
+			<args>
+
+				<!-- CHECK THIS SETTING 
+	  	   Make sure that you have an arg value/path element for 
+	  	   EVERY external jar file that your Java project references.
+	  	   You can get the list of these by right clicking on the project,
+	  	   choosing Build Path -> Configure Build Path, and then checking the Libraries tab.
+	  	-->
+				<!-- classpath needed for java sources compilation -->
+				
+				<arg value="-cp" />
+				<arg path="${m2.repos.dir}/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar" />
+				<arg value="-cp" />
+				<arg path="${m2.repos.dir}/org/hibernate/hibernate-validator/5.1.3.Final/hibernate-validator-5.1.3.Final.jar" />
+				<arg value="-cp" />
+				<arg path="${m2.repos.dir}/com/aurfy/haze/HazeUtils/0.0.1-SNAPSHOT/HazeUtils-0.0.1-SNAPSHOT.jar" />
+
+				<!--
+				<arg value="-cp" />
+				<arg path="${m2.repos.dir}/org/slf4j/slf4j-api/1.7.10/slf4j-api-1.7.10.jar" />
+				<arg value="-cp" />
+				<arg path="${m2.repos.dir}/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar" />
+				<arg value="-cp" />
+				<arg path="${m2.repos.dir}/commons-codec/commons-codec/1.10/commons-codec-1.10.jar" />
+
+				<arg value="-cp" />
+				<arg path="${m2.repos.dir}/com/aurfy/haze/HazeCore/0.0.1-SNAPSHOT/HazeCore-0.0.1-SNAPSHOT.jar" />
+				-->
+				<!--
+				<arg value="-cp" />
+				<arg path="${m2.repos.dir}/org/jboss/logging/jboss-logging/3.1.3.GA/jboss-logging-3.1.3.GA.jar" />
+				<arg value="-cp" />
+				<arg path="${m2.repos.dir}/com/fasterxml/classmate/1.0.0/classmate-1.0.0.jar" />
+
+				<arg value="-cp" />
+				<arg path="${m2.repos.dir}/org/slf4j/slf4j-log4j12/1.7.7/slf4j-log4j12-1.7.7.jar" />
+				<arg value="-cp" />
+				<arg path="${m2.repos.dir}/log4j/log4j/1.2.17/log4j-1.2.17.jar" />
+				
+				<arg value="-cp" />
+				<arg path="${m2.repos.dir}/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar" />
+				<arg value="-cp" />
+				<arg path="${m2.repos.dir}/commons-io/commons-io/2.4/commons-io-2.4.jar" />
+				 -->
+				<!-- Sharpen options are defined in a separate file -->
+				<arg value="@sharpen-all-options" />
+			</args>
+		</sharpen>
+
+	</target>
+
+	<!-- Remove resources from the previous convertion run -->
+	<target name="clean" description="Delete all generated files">
+		<delete failonerror="true" includeemptydirs="true" description="Removing all generated files">
+			<fileset dir="sharpen">
+				<include name="**/*" />
+				<exclude name="**/lib/*" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="copy-generated" depends="sharpen-docs">
+		<copy todir="${output.dotnet.dir}" overwrite="true">
+			<fileset dir="${target.dir}/sharpened.net/src">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+		<echo message="file copied to .net folder" />
+	</target>
+
+</project>

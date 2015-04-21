@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.payment.PaymentFlowMapper">
+
+	<resultMap id="paymentFlowMap" type="PaymentFlowEntity">
+		<id column="pay_flow_id" property="ID" />
+		<result column="pay_summary_id" property="paySummaryId" />
+		<result column="src_app_type" property="srcPayOrder.srcAppType" />
+		<result column="src_ref_id" property="srcPayOrder.srcRefId" />
+		<result column="src_txn_id" property="srcPayOrder.srcTxnId" />
+		<result column="src_txn_type" property="srcPayOrder.srcTxnType" />
+		<result column="src_order_id" property="srcPayOrder.srcOrderId" />
+		<result column="src_currency" property="srcPayOrder.srcCurrency" />
+		<result column="src_amount" property="srcPayOrder.srcAmount" />
+		<result column="channel_id" property="channelId" />
+		<result column="provider_id" property="providerId" />
+		<result column="virtual_account" property="payCredential.virtualAccount" />
+		<result column="card_org" property="payCredential.cardOrg" />
+		<result column="token" property="payCredential.token" />
+		<result column="encrypted_card_no" property="payCredential.encryptedCardNo" />
+		<result column="mask_card_no" property="payCredential.maskCardNo" />
+		<result column="expiry_date" property="payCredential.expiryDate" />
+		<result column="cellphone" property="payCredential.cellphone" />
+		<result column="card_holder_full_name" property="payCredential.cardHolderFullName" />
+		<result column="card_holder_first_name" property="payCredential.cardHolderFirstName" />
+		<result column="card_holder_middle_name" property="payCredential.cardHolderMiddleName" />
+		<result column="card_holder_last_name" property="payCredential.cardHolderLastName" />
+		<result column="credential_type" property="payCredential.credentialType" />
+		<result column="credential_no" property="payCredential.credentialNo" />
+		<result column="txn_type" property="bankOrder.txtType" />
+		<result column="txn_acq_code" property="bankOrder.acqCode" />
+		<result column="txn_mer_id" property="bankOrder.merId" />
+		<result column="txn_sub_mer_id" property="bankOrder.subMerId" />
+		<result column="txn_mcc" property="bankOrder.mcc" />
+		<result column="txn_order_id" property="bankOrder.orderId" />
+		<result column="txn_date" property="bankOrder.txtDate" />
+		<result column="txn_ip" property="bankOrder.ip" />
+		<result column="txn_url" property="bankOrder.url" />
+		<result column="txn_terminal_id" property="bankOrder.terminalId" />
+		<result column="txn_port" property="bankOrder.port" />
+		<result column="txn_address_id" property="bankOrder.addressId" />
+		<result column="txn_amount" property="bankOrder.amount" />
+		<result column="txn_currency" property="bankOrder.currency" />
+		<result column="txn_msg" property="bankOrder.msg" />
+		<result column="exchange_rate" property="bankOrder.exchangeRate" />
+		<result column="send_url" property="sendUrl" />
+		<result column="send_date" property="sendDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="receive_date" property="receiveDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="bank_flow_id" property="bankFlowId" />
+		<result column="bank_resp_date" property="bankRespDate" />
+		<result column="bank_auth_code" property="bankAuthCode" />
+		<result column="raw_resp_code" property="rawRespCode" />
+		<result column="raw_resp_msg" property="rawRespMsg" />
+		<result column="mapped_resp_code" property="mappedRespCode" />
+		<result column="status" property="status" />
+		<result column="reconciliation_date" property="reconciliationDate" />
+		<result column="reconciliation_status" property="reconciliationStatus" />
+		<result column="ref_flow_id" property="refFlowId" />
+		<result column="pf_comments" property="comments" />
+		<result column="pf_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="pf_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+	
+	<insert id="insert" parameterType="PaymentFlowEntity" >
+		INSERT INTO payment_flow 
+		(pay_flow_id, pay_summary_id, src_app_type, 
+		 src_ref_id, src_txn_id, src_txn_type, 
+		 src_order_id, src_currency, src_amount, 
+		 channel_id, provider_id, virtual_account, 
+		 card_org, token, encrypted_card_no, 
+		 mask_card_no, expiry_date, cellphone, 
+		 card_holder_full_name, card_holder_first_name, card_holder_middle_name, 
+		 card_holder_last_name, credential_type, credential_no,
+		 txn_type, txn_acq_code, txn_mer_id, 
+		 txn_sub_mer_id, txn_mcc, txn_order_id, 
+		 txn_date, txn_ip, txn_url, 
+		 txn_terminal_id, txn_port, txn_address_id, 
+		 txn_amount, txn_currency, txn_msg, 
+		 exchange_rate, send_url, send_date, 
+		 receive_date, bank_flow_id, bank_resp_date, 
+		 bank_auth_code, raw_resp_code, raw_resp_msg, 
+		 mapped_resp_code, status, reconciliation_date, 
+		 reconciliation_status, ref_flow_id, comments, 
+		 create_date, update_date)
+		VALUES 
+		(#{ID}, #{paySummaryId}, #{srcPayOrder.srcAppType}, 
+		 #{srcPayOrder.srcRefId}, #{srcPayOrder.srcTxnId}, #{srcPayOrder.srcTxnType}, 
+		 #{srcPayOrder.srcOrderId}, #{srcPayOrder.srcCurrency}, #{srcPayOrder.srcAmount}, 
+		 #{channelId}, #{providerId}, #{payCredential.virtualAccount},
+		 #{payCredential.cardOrg}, #{payCredential.token}, #{payCredential.encryptedCardNo}, 
+		 #{payCredential.maskCardNo}, #{payCredential.expiryDate}, #{payCredential.cellphone}, 
+		 #{payCredential.cardHolderFullName}, #{payCredential.cardHolderFirstName}, #{payCredential.cardHolderMiddleName}, 
+		 #{payCredential.cardHolderLastName}, #{payCredential.credentialType}, #{payCredential.credentialNo}, 
+		 #{bankOrder.txtType}, #{bankOrder.acqCode}, #{bankOrder.merId}, 
+		 #{bankOrder.subMerId}, #{bankOrder.mcc}, #{bankOrder.orderId}, 
+		 #{bankOrder.txtDate}, #{bankOrder.ip}, #{bankOrder.url}, 
+		 #{bankOrder.terminalId}, #{bankOrder.port}, #{bankOrder.addressId}, 
+		 #{bankOrder.amount}, #{bankOrder.currency}, #{bankOrder.msg}, 
+		 #{bankOrder.exchangeRate}, #{sendUrl}, #{sendDate}, 
+		 #{receiveDate}, #{bankFlowId}, #{bankRespDate}, 
+		 #{bankAuthCode}, #{rawRespCode}, #{rawRespMsg}, 
+		 #{mappedRespCode}, #{status}, #{reconciliationDate}, 
+		 #{reconciliationStatus}, #{refFlowId}, #{comments}, 
+		 #{createDate}, #{updateDate})
+	</insert>
+
+	<sql id="defaultSelect">
+	SELECT   pf.pay_flow_id, pf.pay_summary_id, pf.src_app_type, pf.src_ref_id, 
+		 	 pf.src_txn_id, pf.src_txn_type, pf.src_order_id, 
+		 	 pf.src_currency, pf.src_amount, pf.channel_id, pf.provider_id, pf.virtual_account,
+			 pf.card_org, pf.token, pf.encrypted_card_no, 
+			 pf.mask_card_no, pf.expiry_date, pf.cellphone, 
+			 pf.card_holder_full_name, pf.card_holder_first_name, 
+			 pf.card_holder_middle_name, pf.card_holder_last_name, 
+			 pf.credential_type, pf.credential_no,
+			 pf.txn_type, pf.txn_acq_code, pf.txn_mer_id, pf.txn_sub_mer_id, pf.txn_mcc,
+			 pf.txn_order_id, pf.txn_date, pf.txn_ip, pf.txn_url, pf.txn_terminal_id, pf.txn_port,
+			 pf.txn_address_id, pf.txn_amount, pf.txn_currency, pf.txn_msg, 
+			 pf.exchange_rate, pf.send_url, pf.send_date, pf.receive_date, pf.bank_flow_id, 
+			 pf.bank_resp_date, pf.bank_auth_code, pf.raw_resp_code, pf.raw_resp_msg, pf.mapped_resp_code, 
+			 pf.status, pf.reconciliation_date, pf.reconciliation_status, pf.ref_flow_id, 
+			 pf.comments pf_comments, pf.create_date pf_cr_dt, pf.update_date pf_up_dt
+	 FROM payment_flow pf 
+	</sql>
+	
+	<select id="selectOne" parameterType="string" resultMap="paymentFlowMap">
+		<include refid="defaultSelect"/>
+		 WHERE pf.pay_flow_id = #{ID}
+	</select>
+	
+	<select id="selectByBankOrderId" parameterType="string" resultMap="paymentFlowMap">
+		<include refid="defaultSelect"/>
+		 WHERE pf.txn_order_id = #{bankOrderId}
+	</select>
+	
+	<select id="selectBy" resultMap="paymentFlowMap">
+		<include refid="defaultSelect"/>
+		<where>
+			<if test="filterEntity.ID != null">
+				 pf.pay_flow_id = #{ID}
+			</if>
+			<if test="filterEntity.paySummaryId != null">
+				 AND pf.pay_summary_id = #{filterEntity.paySummaryId}
+			</if>
+		</where>
+		<if test="startIndex >= 0 and fetchRows > 0">
+			LIMIT #{startIndex}, #{fetchRows}
+		</if>
+	</select>
+	
+	<select id="selectAll" resultMap="paymentFlowMap">
+		<include refid="defaultSelect"/>
+	</select>
+	
+	<sql id="defaultCount">
+		SELECT count(*) FROM payment_flow pf 
+	</sql>
+	
+	<select id="countBy" parameterType="string" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity.ID != null">
+				 pf.pay_flow_id = #{ID}
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+	
+	<update id="update" parameterType="PaymentFlowEntity" >
+		update payment_flow 
+	    <set>
+	      <if test="paySummaryId != null">pay_summary_id = #{paySummaryId},</if>
+	      <if test="srcPayOrder != null">
+	      		<if test="srcPayOrder.srcAppType != null">src_app_type = #{srcPayOrder.srcAppType},</if>
+	      		<if test="srcPayOrder.srcRefId != null">src_ref_id = #{srcPayOrder.srcRefId},</if>
+			    <if test="srcPayOrder.srcTxnId != null">src_txn_id = #{srcPayOrder.srcTxnId},</if>
+			    <if test="srcPayOrder.srcTxnType != null">src_txn_type = #{srcPayOrder.srcTxnType},</if>
+			    <if test="srcPayOrder.srcOrderId != null">src_order_id = #{srcPayOrder.srcOrderId},</if>
+	      		<if test="srcPayOrder.srcCurrency != null">src_currency = #{srcPayOrder.srcCurrency},</if>
+			    <if test="srcPayOrder.srcAmount != null">src_amount = #{srcPayOrder.srcAmount},</if>
+	      </if>
+	      <if test="channelId != null">channel_id = #{channelId},</if>
+	      <if test="providerId != null">provider_id = #{providerId},</if>
+	      <if test="payCredential != null">
+	      		<if test="payCredential.virtualAccount != null">virtual_account = #{payCredential.virtualAccount},</if>
+	      		<if test="payCredential.cardOrg != null">card_org = #{payCredential.cardOrg},</if>
+			    <if test="payCredential.token != null">token = #{payCredential.token},</if>
+			    <if test="payCredential.encryptedCardNo != null">encrypted_card_no = #{payCredential.encryptedCardNo},</if>
+			    <if test="payCredential.maskCardNo != null">mask_card_no = #{payCredential.maskCardNo},</if>
+	      		<if test="payCredential.expiryDate != null">expiry_date = #{payCredential.expiryDate},</if>
+	      		<if test="payCredential.cellphone != null">cellphone = #{payCredential.cellphone},</if>
+	      		<if test="payCredential.cardHolderFullName != null">card_holder_full_name = #{payCredential.cardHolderFullName},</if>
+	      		<if test="payCredential.cardHolderFirstName != null">card_holder_first_name = #{payCredential.cardHolderFirstName},</if>
+	      		<if test="payCredential.cardHolderMiddleName != null">card_holder_middle_name = #{payCredential.cardHolderMiddleName},</if>
+	      		<if test="payCredential.cardHolderLastName != null">card_holder_last_name = #{payCredential.cardHolderLastName},</if>
+	      		<if test="payCredential.credentialType != null">credential_type = #{payCredential.credentialType},</if>
+	      		<if test="payCredential.credentialNo != null">credential_no = #{payCredential.credentialNo},</if>
+	      </if>
+	      <if test="bankOrder != null">
+	      		<if test="bankOrder.txtType != null">txn_type = #{bankOrder.txtType},</if>
+	      		<if test="bankOrder.acqCode != null">txn_acq_code = #{bankOrder.acqCode},</if>
+		      	<if test="bankOrder.merId != null">txn_mer_id = #{bankOrder.merId},</if>
+		      	<if test="bankOrder.subMerId != null">txn_sub_mer_id = #{bankOrder.subMerId},</if>
+		      	<if test="bankOrder.mcc != null">txn_mcc = #{bankOrder.mcc},</if>
+		      	<if test="bankOrder.orderId != null">txn_order_id = #{bankOrder.orderId},</if>
+		      	<if test="bankOrder.txtDate != null">txn_date = #{bankOrder.txtDate},</if>
+		      	<if test="bankOrder.ip != null">txn_ip = #{bankOrder.ip},</if>
+		      	<if test="bankOrder.url != null">txn_url = #{bankOrder.url},</if>
+		      	<if test="bankOrder.txtType != null">txn_terminal_id = #{bankOrder.txtType},</if>
+		      	<if test="bankOrder.port != null">txn_port = #{bankOrder.port},</if>
+		      	<if test="bankOrder.addressId != null">txn_address_id = #{bankOrder.addressId},</if>
+		      	<if test="bankOrder.amount != null">txn_amount = #{bankOrder.amount},</if>
+		      	<if test="bankOrder.currency != null">txn_currency = #{bankOrder.currency},</if>
+	      		<if test="bankOrder.msg != null">txn_msg = #{bankOrder.msg},</if>
+	      		<if test="bankOrder.exchangeRate != null">exchange_rate = #{bankOrder.exchangeRate},</if>
+	      </if>
+	      <if test="sendUrl != null">send_url = #{sendUrl},</if>
+	      <if test="sendDate != null">send_date = #{sendDate},</if>
+	      <if test="receiveDate != null">receive_date = #{receiveDate},</if>
+	      <if test="bankFlowId != null">bank_flow_id = #{bankFlowId},</if>
+	      <if test="bankRespDate != null">bank_resp_date = #{bankRespDate},</if>
+	      <if test="bankAuthCode != null">bank_auth_code = #{bankAuthCode},</if>
+	      <if test="rawRespCode != null">raw_resp_code = #{rawRespCode},</if>
+	      <if test="rawRespMsg != null">raw_resp_msg = #{rawRespMsg},</if>
+	      <if test="mappedRespCode != null">mapped_resp_code = #{mappedRespCode},</if>
+	      <if test="status != null">status = #{status},</if>
+	      <if test="reconciliationDate != null">reconciliation_date = #{reconciliationDate},</if>
+	      <if test="reconciliationStatus != null">reconciliation_status = #{reconciliationStatus},</if>
+	      <if test="refFlowId != null">ref_flow_id = #{refFlowId},</if>
+	      <if test="comments != null">comments = #{comments},</if>
+	      <if test="createDate != null">create_date = #{createDate},</if>
+	      <if test="updateDate != null">update_date = #{updateDate},</if>
+	    </set>
+		where pay_flow_id = #{ID}
+	</update>
+
+	<delete id="delete" parameterType="string" >
+		DELETE FROM payment_flow WHERE pay_flow_id = #{ID}
+	</delete>
+	
+</mapper>

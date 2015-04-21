@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.infra.VariableMapMapper">
+
+	<!-- result maps -->
+	<resultMap id="variableMap" type="VariableMapEntity">
+		<id column="map_id" property="ID" />
+		<result column="classifer" property="classifer" />
+		<result column="key_name" property="keyName" />
+		<result column="map_value" property="mapValue" />
+		<result column="var_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="var_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+
+	<insert id="insert" parameterType="VariableMapEntity" >
+		INSERT INTO var_map (map_id, classifer, key_name, map_value, create_date, update_date)
+		VALUES (#{ID}, #{classifer}, #{keyName}, #{mapValue}, #{createDate}, #{updateDate})
+	</insert>
+
+	<select id="selectOne" parameterType="string" resultMap="variableMap">
+		SELECT var.map_id, var.classifer, var.key_name, var.map_value,
+			var.create_date var_cr_dt, var.update_date var_up_dt
+		 FROM var_map var WHERE var.map_id = #{ID}
+	</select>
+
+	<select id="selectVariableMapByKeyName" parameterType="string" resultMap="variableMap">
+		SELECT var.map_id, var.classifer, var.key_name, var.map_value,
+			var.create_date variable_cr_dt, var.update_date variable_up_dt
+		 FROM var_map var WHERE var.key_name = #{keyName}
+	</select>
+
+	<update id="update" parameterType="VariableMapEntity" >
+		update var_map 
+	    <set>
+	      <if test="classifer != null">classifer = #{classifer},</if>
+	      <if test="keyName != null">key_name = #{keyName},</if>
+	      <if test="mapValue != null">map_value = #{mapValue},</if>
+	      <if test="createDate != null">create_date = #{createDate},</if>
+	      <if test="updateDate != null">update_date = #{updateDate},</if>
+	    </set>
+		where map_id = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="string" >
+		DELETE FROM var_map WHERE map_id = #{ID}
+	</delete>
+	
+
+</mapper>

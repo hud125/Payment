@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.infra.ClearingAccountMapper">
+
+	<resultMap type="ClearingAccountEntity" id="clearingAccountMap">
+		<id property="ID" column="clearing_acc_id"/>
+		<result property="scheduleBatchID" column="schedule_batch_id"/>
+		<result column="clearing_date" property="clearingDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result property="merchantID" column="mer_id"/>
+		<result property="merSubID" column="sub_mer_id"/>
+		<result property="clearingCurrency" column="clearing_currency"/>
+		<result property="sumIncomeAmount" column="sum_income_amount"/>
+		<result property="sumOperationAmount" column="sum_operation_amount"/>
+		<result property="sumDepositAmount" column="sum_deposit_amount"/>
+		<result property="sumReturnDepositAmount" column="sum_return_deposit_amount"/>
+		<result property="sumBalanceAmount" column="sum_balance_amount"/>
+		<result column="clear_acc_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="clear_acc_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+	<insert id="insert" parameterType="ClearingAccountEntity">
+	INSERT INTO clearing_acc
+	(clearing_acc_id, schedule_batch_id, clearing_date, mer_id, sub_mer_id, clearing_currency, 
+	sum_income_amount, sum_operation_amount, sum_deposit_amount, sum_return_deposit_amount, sum_balance_amount, create_date, update_date)
+	VALUES (#{ID}, #{scheduleBatchID}, #{clearingDate}, #{merchantID}, #{merSubID}, #{clearingCurrency}, #{sumIncomeAmount},
+	 #{sumOperationAmount}, #{sumDepositAmount}, #{sumReturnDepositAmount}, #{sumBalanceAmount}, #{createDate}, #{updateDate})
+	</insert>
+	<delete id="delete" parameterType="string">
+		DELETE FROM clearing_acc WHERE clearing_acc_id = #{ID}
+	</delete>
+	<sql id="defaultSelect">
+		SELECT
+		clearing_acc_id, schedule_batch_id, clearing_date, mer_id, sub_mer_id, clearing_currency, 
+		sum_income_amount, sum_operation_amount, sum_deposit_amount, sum_return_deposit_amount, sum_balance_amount,
+		create_date clear_acc_cr_dt, update_date clear_acc_up_dt
+		FROM clearing_acc
+	</sql>
+	<select id="selectOne" parameterType="string" resultMap="clearingAccountMap">
+		<include refid="defaultSelect"/>
+		WHERE clearing_acc_id = #{ID}
+	</select>
+	<select id="selectBy" resultMap="clearingAccountMap">
+		<include refid="defaultSelect"/>
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					clearing_acc_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	<select id="selectAll" resultMap="clearingAccountMap">
+		<include refid="defaultSelect"/>
+	</select>
+	<sql id="defaultCount">
+		SELECT count(*) FROM clearing_acc
+	</sql>
+	<select id="countBy" resultType="int">
+		<include refid="defaultCount"/>
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					clearing_acc_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount"/>
+	</select>
+	<update id="update" parameterType="ClearingAccountEntity">
+		UPDATE clearing_acc
+		<set>
+			<if test="scheduleBatchID != null">schedule_batch_id = #{scheduleBatchID},</if>
+			<if test="clearingDate != null">clearing_date = #{clearingDate},</if>
+			<if test="merchantID != null">mer_id = #{merchantID},</if>
+			<if test="merSubID != null">sub_mer_id = #{merSubID},</if>
+			<if test="clearingCurrency != null">clearing_currency = #{clearingCurrency},</if>
+			<if test="sumIncomeAmount != null">sum_income_amount = #{sumIncomeAmount},</if>
+			<if test="sumOperationAmount != null">sum_operation_amount = #{sumOperationAmount},</if>
+			<if test="sumDepositAmount != null">sum_deposit_amount = #{sumDepositAmount},</if>
+			<if test="sumReturnDepositAmount != null">sum_return_deposit_amount = #{sumReturnDepositAmount},</if>
+			<if test="sumBalanceAmount != null">sum_balance_amount = #{sumBalanceAmount},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="updateDate != null">update_date = #{updateDate},</if>
+		</set>
+		WHERE clearing_acc_id = #{ID}
+	</update>
+</mapper>

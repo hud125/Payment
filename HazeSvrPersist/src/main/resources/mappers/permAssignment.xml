@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.perm.PermAssignmentMapper">
+
+	<!-- result maps -->
+	<resultMap id="permAssignmentMap" type="PermAssignmentEntity">
+		<id column="assignment_id" property="ID" />
+		<result column="assignee_id" property="assigneeId" />
+		<result column="assignee_classifier" property="assigneeClassifier" />
+		<result column="perm_value" property="permValue" />
+		<result column="ass_comments" property="comments" />
+		<result column="ass_owner_id" property="ownerId" />
+		<result column="ass_cr_date" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="ass_up_date" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+		
+		<association property="permEntry" javaType="PermEntryEntity" resultMap="com.aurfy.haze.dao.perm.PermEntryMapper.permEntryMap" />
+	</resultMap>
+
+	<insert id="insert" parameterType="PermAssignmentEntity" >
+		INSERT INTO p_assignment 
+		(assignment_id, assignee_id, assignee_classifier, perm_entry_id, 
+			perm_value, comments, owner_id, create_date, update_date)
+		VALUES 
+		(#{ID}, #{assigneeId}, #{assigneeClassifier}, #{permEntry.ID}, 
+			#{permValue}, #{comments}, #{ownerId}, #{createDate}, #{updateDate})
+	</insert>
+
+	<sql id="defaultSelect">
+		SELECT  ass.assignment_id, ass.assignee_id, ass.assignee_classifier, 
+				ass.perm_value, ass.comments ass_comments, ass.create_date ass_cr_date, ass.update_date ass_up_date,
+				entry.perm_entry_id, entry.entry_key, entry.display_name entry_display_name, 
+				entry.comments entry_comments, entry.owner_id ass_owner_id, entry.create_date entry_cr_date, entry.update_date entry_up_date
+		FROM p_assignment ass
+			left join p_perm_entry entry on entry.perm_entry_id = ass.perm_entry_id
+	</sql>
+
+	<select id="selectOne" parameterType="string" resultMap="permAssignmentMap">
+		<include refid="defaultSelect"/>
+		WHERE ass.assignment_id = #{ID}
+	</select>
+	
+	<select id="selectBy" resultMap="permAssignmentMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.ID != null">
+					ass.assignment_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.assigneeId != null">
+					AND ass.assignee_id = #{filterEntity.assigneeId}
+				</if>
+				<if test="filterEntity.assigneeClassifier != null">
+					AND ass.assignee_classifier = #{filterEntity.assigneeClassifier}
+				</if>
+				<if test="filterEntity.permValue != null">
+					AND ass.perm_value = #{filterEntity.permValue}
+				</if>
+				<if test="filterEntity.createDate != null">
+					AND ass.create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate != null">
+					AND ass.update_date = #{filterEntity.updateDate}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	
+	<select id="selectAll" resultMap="permAssignmentMap">
+		<include refid="defaultSelect"/>
+	</select>
+
+	<sql id="defaultCount">
+		SELECT count(*) FROM p_assignment ass 
+	</sql>
+	
+	<select id="countBy" parameterType="PermAssignmentEntity" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.ID != null">
+					ass.assignment_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.assigneeId != null">
+					AND ass.assignee_id = #{filterEntity.assigneeId}
+				</if>
+				<if test="filterEntity.assigneeClassifier != null">
+					AND ass.assignee_classifier = #{filterEntity.assigneeClassifier}
+				</if>
+				<if test="filterEntity.permValue != null">
+					AND ass.perm_value = #{filterEntity.permValue}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+
+	<update id="update" parameterType="PermAssignmentEntity">
+		UPDATE p_assignment 
+		<set>
+	      <if test="assigneeId != null">assignee_id = #{assigneeId},</if>
+	      <if test="assigneeClassifier != null">assignee_classifier = #{assigneeClassifier},</if>
+	      <if test="permValue != null">perm_value = #{permValue},</if>
+	      <if test="comments != null">comments = #{comments},</if>
+	      <if test="ownerId != null">owner_id = #{ownerId},</if>
+	      <if test="createDate != null">create_date = #{createDate},</if>
+	      <if test="updateDate != null">update_date = #{updateDate},</if>
+	    </set>
+		WHERE assignment_id = #{ID}
+	</update>
+
+	<delete id="delete" parameterType="string">
+		DELETE FROM p_assignment WHERE assignment_id = #{ID}
+	</delete>
+	
+	<select id="selectGrantedAssignmentByUserId" resultMap="permAssignmentMap" >
+		select temp3.perm_entry_id, ass.assignment_id, ass.assignee_id, ass.assignee_classifier, 
+				ass.perm_value, ass.comments ass_comments, ass.create_date ass_cr_date, ass.update_date ass_up_date,
+				entry.perm_entry_id, entry.entry_key, entry.display_name entry_display_name, 
+				entry.comments entry_comments, entry.create_date entry_cr_date, entry.update_date entry_up_date
+		from 
+				(select distinct temp1.perm_entry_id from 
+						(select distinct ass.perm_entry_id
+							from p_assignment ass 
+							left join users user on ass.assignee_id = user.user_id
+							where user.user_id = #{userId} and ass.assignee_classifier = #{assigneeClassifier1} 
+							and ass.perm_value = #{permValue1}
+						union
+						select distinct ass.perm_entry_id
+							from p_assignment ass 
+							left join p_role role on role.role_id = ass.assignee_id
+							left join p_relation prel on prel.role_id = role.role_id
+							left join users user on user.user_id = prel.user_id
+							where user.user_id = #{userId} and ass.assignee_classifier = #{assigneeClassifier2}  
+							and ass.perm_value = #{permValue1}) temp1 
+				where not exists(
+						select distinct temp2.perm_entry_id from 
+								(select distinct ass.perm_entry_id
+									from p_assignment ass 
+									left join users user on ass.assignee_id = user.user_id
+									where user.user_id = #{userId} and ass.assignee_classifier = #{assigneeClassifier1}  
+									and ass.perm_value = #{permValue2}
+								union
+								select distinct ass.perm_entry_id
+									from p_assignment ass 
+									left join p_role role on role.role_id = ass.assignee_id
+									left join p_relation prel on prel.role_id = role.role_id
+									left join users user on user.user_id = prel.user_id
+									where user.user_id = #{userId} and ass.assignee_classifier = #{assigneeClassifier2} 
+									and ass.perm_value = #{permValue2}) temp2 
+						where temp1.perm_entry_id = temp2.perm_entry_id)) temp3 
+			left join p_assignment ass on ass.perm_entry_id = temp3.perm_entry_id
+			left join p_perm_entry entry on ass.perm_entry_id = entry.perm_entry_id
+	</select>
+	
+	<select id="selectDeniedAssignmentByUserId" resultMap="permAssignmentMap" >
+		select distinct temp2.perm_entry_id, ass.assignment_id, ass.assignee_id, ass.assignee_classifier, 
+				ass.perm_value, ass.comments ass_comments, ass.create_date ass_cr_date, ass.update_date ass_up_date,
+				entry.perm_entry_id, entry.entry_key, entry.display_name entry_display_name, 
+				entry.comments entry_comments, entry.create_date entry_cr_date, entry.update_date entry_up_date
+		from 
+				(select distinct ass.perm_entry_id
+					from p_assignment ass 
+					left join users user on ass.assignee_id = user.user_id
+					where user.user_id = #{userId} and ass.assignee_classifier = #{assigneeClassifier1}  
+					and ass.perm_value = #{permValue2}
+				union
+				select distinct ass.perm_entry_id
+					from p_assignment ass 
+					left join p_role role on role.role_id = ass.assignee_id
+					left join p_relation prel on prel.role_id = role.role_id
+					left join users user on user.user_id = prel.user_id
+					where user.user_id = #{userId} and ass.assignee_classifier = #{assigneeClassifier2}  
+					and ass.perm_value = #{permValue2}) temp2 
+		left join p_assignment ass on ass.perm_entry_id = temp2.perm_entry_id
+		left join p_perm_entry entry on ass.perm_entry_id = entry.perm_entry_id
+	</select>
+	
+	
+</mapper>

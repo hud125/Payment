@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.infra.AuditLogMapper">
+
+	<!-- result maps -->
+	<resultMap id="auditLogMap" type="AuditLogEntity">
+		<id column="audit_id" property="ID" />
+		<result column="module" property="module" />
+		<result column="action" property="action" />
+		<result column="result" property="result" />
+		<result column="param1" property="param1" />
+		<result column="param2" property="param2" />
+		<result column="param3" property="param3" />
+		<result column="param4" property="param4" />
+		<result column="param5" property="param5" />
+		<result column="owner_id" property="ownerId" />
+		<result column="comments" property="comments" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+
+	<insert id="insert" parameterType="AuditLogEntity" statementType="PREPARED">
+		INSERT INTO audit_log
+		(audit_id, module,
+		action, result, param1, param2, param3, param4, param5, owner_id, comments, create_date,
+		update_date)
+		VALUES
+		(#{ID}, #{module},
+		#{action}, #{result}, #{param1}, #{param2}, #{param3}, #{param4}, #{param5},
+		#{ownerId}, #{comments}, #{createDate}, #{updateDate})
+	</insert>
+	<delete id="delete" parameterType="String">
+		DELETE FROM audit_log
+		WHERE audit_id = #{ID}
+	</delete>
+	<sql id="defaultCount">
+		SELECT count(*) FROM audit_log
+	</sql>
+	<select id="countBy" parameterType="AuditLogEntity" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.ID !=null">
+					audit_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.module!=null">
+					AND module = #{filterEntity.module}
+				</if>
+				<if test="filterEntity.action!=null">
+					AND action = #{filterEntity.action}
+				</if>
+				<if test="filterEntity.result!=null">
+					AND result = #{filterEntity.result}
+				</if>
+				<if test="filterEntity.createDate!=null">
+					<![CDATA[
+						AND create_date >= #{filterEntity.createDate}
+					]]>
+				</if>
+				<if test="filterEntity.updateDate!=null">
+					<![CDATA[
+						AND create_date <= #{filterEntity.updateDate}
+					]]>
+				</if>
+				<if test="filterEntity.param1!=null">
+					AND param1 like "%"#{filterEntity.param1}"%" </if>
+				<if test="filterEntity.param2!=null">
+					AND param2 like "%"#{filterEntity.param2}"%" </if>
+				<if test="filterEntity.param3!=null">
+					AND param3 like "%"#{filterEntity.param3}"%" </if>
+				<if test="filterEntity.param4!=null">
+					AND param4 like "%"#{filterEntity.param4}"%" </if>
+				<if test="filterEntity.param5!=null">
+					AND param5 like "%"#{filterEntity.param5}"%"</if>
+				<if test="filterEntity.comments!=null">
+					AND comments like "%"#{filterEntity.comments}"%"</if>
+				<if test="filterEntity.ownerId!=null">
+					AND owner_id like "%"#{filterEntity.ownerId}"%" </if>
+			</if>
+		</where>
+	</select>
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+	<sql id="defaultSelect">
+		SELECT 
+		audit_id, module, action, result, param1, param2, param3, param4, param5, owner_id, comments, create_date, update_date 
+		FROM audit_log
+	</sql>
+	<select id="selectOne" parameterType="String" resultMap="auditLogMap">
+		<include refid="defaultSelect"/>
+		WHERE audit_id = #{ID}
+	</select>
+
+	<select id="selectAll" resultMap="auditLogMap">
+		<include refid="defaultSelect"/>
+	</select>
+
+	<select id="selectBy" resultMap="auditLogMap">
+		<include refid="defaultSelect"/>
+		<where>
+			<if test="filterEntity != null">
+				<if test="filterEntity.ID !=null">
+					audit_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.module!=null">
+					AND module = #{filterEntity.module}
+				</if>
+				<if test="filterEntity.action!=null">
+					AND action = #{filterEntity.action}
+				</if>
+				<if test="filterEntity.result!=null">
+					AND result = #{filterEntity.result}
+				</if>
+				<if test="filterEntity.createDate!=null">
+					<![CDATA[
+						AND create_date >= #{filterEntity.createDate}
+					]]>
+				</if>
+				<if test="filterEntity.updateDate!=null">
+					<![CDATA[
+						AND create_date <= #{filterEntity.updateDate}
+					]]>
+				</if>
+				<if test="filterEntity.param1!=null">
+					AND param1 like "%"#{filterEntity.param1}"%" </if>
+				<if test="filterEntity.param2!=null">
+					AND param2 like "%"#{filterEntity.param2}"%" </if>
+				<if test="filterEntity.param3!=null">
+					AND param3 like "%"#{filterEntity.param3}"%" </if>
+				<if test="filterEntity.param4!=null">
+					AND param4 like "%"#{filterEntity.param4}"%" </if>
+				<if test="filterEntity.param5!=null">
+					AND param5 like "%"#{filterEntity.param5}"%"</if>
+				<if test="filterEntity.comments!=null">
+					AND comments like "%"#{filterEntity.comments}"%"</if>
+				<if test="filterEntity.ownerId!=null">
+					AND owner_id like "%"#{filterEntity.ownerId}"%" </if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+</mapper>

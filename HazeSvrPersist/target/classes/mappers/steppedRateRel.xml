@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.configuration.rate.SteppedRateRelMapper">
+
+	<!-- result maps -->
+	<resultMap id="steppedRateRelMap" type="SteppedRateRelEntity">
+		<association property="rateConfig" javaType="RateConfigEntity" resultMap="com.aurfy.haze.dao.configuration.rate.RateConfigMapper.rateConfigMap" />
+		<association property="steppedRate" javaType="SteppedRateEntity" resultMap="com.aurfy.haze.dao.configuration.rate.SteppedRateMapper.steppedRateMap" />
+	</resultMap>
+
+	<insert id="insert" parameterType="SteppedRateRelEntity" >
+		INSERT INTO stepped_rate_relation 
+		(rate_config_id, stepped_rate_id)
+		VALUES 
+		(#{rateConfig.ID}, #{steppedRate.ID})
+	</insert>
+	
+	<sql id="defaultSelect">
+		SELECT  sr.stepped_rate_id, sr.rate_role_classifier sr_rate_role_classifier, 
+				sr.target_id sr_target_id, sr.currency sr_currency, 
+				sr.min_bound sr_min_bound, sr.percentage sr_percentage, 
+				sr.fixed_amount sr_fixed_amount, sr.min_amount sr_min_amount, sr.max_amount sr_max_amount, 
+				sr.comments sr_comments, sr.owner_id sr_owner_id, 
+				sr.create_date sr_cr_dt, sr.update_date sr_up_dt,
+				rc.rate_config_id, rc.target_id rc_target_id, rc.rate_role_classifier rc_rate_role_classifier, 
+				rc.comments as rc_comments, rc.create_date as rc_cr_date, rc.update_date as rc_up_date
+		FROM stepped_rate_relation srr 
+			left join stepped_rate sr on srr.stepped_rate_id = sr.stepped_rate_id
+			left join rate_config rc on srr.rate_config_id = rc.rate_config_id
+	</sql>
+
+	<select id="selectSteppedRateRelByRateConf" parameterType="string" resultMap="steppedRateRelMap">
+		<include refid="defaultSelect"/>
+		WHERE srr.rate_config_id = #{rateConfig.ID}
+	</select>
+
+	<select id="selectSteppedRateRelBySteppedRate" parameterType="string" resultMap="steppedRateRelMap">
+		<include refid="defaultSelect"/>
+		WHERE srr.stepped_rate_id = #{steppedRate.ID}
+	</select>
+
+	<update id="updateSteppedRateRelBySteppedRate" parameterType="SteppedRateRelEntity">
+		UPDATE stepped_rate_relation 
+		<set>
+	      <if test="steppedRate != null">stepped_rate_id = #{steppedRate.ID},</if>
+	    </set>
+		WHERE rate_config_id = #{rateConfig.ID}
+	</update>
+
+	<delete id="deleteSteppedRateRelByRateConfAndSteppedRate" parameterType="SteppedRateRelEntity">
+		DELETE FROM stepped_rate_relation 
+		WHERE stepped_rate_id = #{steppedRate.ID} and rate_config_id = #{rateConfig.ID}
+	</delete>
+
+</mapper>

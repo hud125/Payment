@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.infra.CountryMapper">
+
+	<!-- result maps -->
+	<resultMap id="countryMap" type="CountryEntity">
+		<id column="country_id" property="ID" />
+		<result column="country_name" property="name" />
+		<result column="country_abbrev" property="abbreviation" />
+		<result column="country_code" property="countryCode" />
+		<result column="country_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="country_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+
+	<insert id="insert" parameterType="CountryEntity" >
+		INSERT INTO country (country_id, country_name, abbrev, country_code, create_date, update_date)
+		VALUES (#{ID}, #{name}, #{abbreviation}, #{countryCode}, #{createDate}, #{updateDate})
+	</insert>
+
+	<sql id="defaultSelect">
+		SELECT co.country_id, co.country_name, co.abbrev country_abbrev, 
+			   co.country_code, co.create_date country_cr_dt, co.update_date country_up_dt
+		 FROM country co 
+	</sql>
+
+	<select id="selectOne" parameterType="string" resultMap="countryMap">
+		<include refid="defaultSelect"/>
+		WHERE co.country_id = #{ID}
+	</select>
+	
+	<select id="selectBy" resultMap="countryMap">
+		<include refid="defaultSelect"/>
+		<where>
+			<if test="filterEntity.name != null">
+				 co.country_name like #{filterEntity.name}
+			</if>
+		</where>
+		<if test="startIndex >= 0 and fetchRows > 0">
+			LIMIT #{startIndex}, #{fetchRows}
+		</if>
+	</select>
+	
+	<select id="selectAll" resultMap="countryMap">
+		<include refid="defaultSelect"/>
+	</select>
+	
+	<sql id="defaultCount">
+		SELECT count(*) FROM country co 
+	</sql>
+
+	<select id="countBy" resultType="int">
+		<include refid="defaultCount"/>
+		<where>
+			<if test="filterEntity.name != null">
+				 co.country_name like #{filterEntity.name}
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount"/>
+	</select>
+
+	<update id="update" parameterType="CountryEntity" >
+		update country  
+	    <set>
+	      <if test="name != null">country_name = #{name},</if>
+	      <if test="abbreviation != null">abbrev = #{abbreviation},</if>
+	      <if test="countryCode != null">country_code = #{countryCode},</if>
+	      <if test="createDate != null">create_date = #{createDate},</if>
+	      <if test="updateDate != null">update_date = #{updateDate},</if>
+	    </set>
+		where country_id = #{ID}
+	</update>
+	
+	<delete id="delete" parameterType="string" >
+		DELETE FROM country WHERE country_id = #{ID}
+	</delete>
+
+</mapper>

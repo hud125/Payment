@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.settlement.MerSettleConfigMapper">
+
+	<!-- result maps -->
+	<resultMap id="merSettleConfigMap" type="MerSettleConfigEntity">
+		<id column="mer_settle_conf_id" property="ID" />
+		<result column="mer_id" property="merId" />
+		<result column="sub_mer_id" property="subMerID" />
+		<result column="settle_currencies" property="settleCurrencies" />
+		<result column="settle_cond" property="settleCondition" />
+		<result column="settle_period_day" property="settlePeriodDay" />
+		<result column="max_delivery_day" property="maxDeliveryDay" />
+		<result column="reconciliation_diff_policy" property="reconciliationDiffPolicy" />
+		<result column="deposit_rate" property="depositRate" />
+		<result column="freeze_policy" property="freezePolicy" />
+		<result column="msc_cr_dt" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="msc_up_dt" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+	</resultMap>
+
+	<insert id="insert" parameterType="MerSettleConfigEntity">
+		INSERT INTO mer_settle_conf
+		(mer_settle_conf_id, mer_id, sub_mer_id,
+		settle_currencies, settle_cond, settle_period_day,
+		max_delivery_day, reconciliation_diff_policy, deposit_rate,
+		freeze_policy, create_date, update_date)
+		VALUES
+		(#{ID}, #{merId}, #{subMerID}, #{settleCurrencies},
+		#{settleCondition},
+		#{settlePeriodDay},
+		#{maxDeliveryDay}, #{reconciliationDiffPolicy}, #{depositRate},
+		#{freezePolicy}, #{createDate},
+		#{updateDate})
+	</insert>
+	
+	<sql id="defaultSelect">
+		SELECT msc.mer_settle_conf_id, msc.mer_id, msc.sub_mer_id, msc.settle_currencies, msc.settle_cond,
+		msc.settle_period_day,
+		msc.max_delivery_day, msc.reconciliation_diff_policy, msc.deposit_rate,
+		msc.freeze_policy,
+		msc.create_date, msc.update_date
+		FROM mer_settle_conf msc
+	</sql>
+	
+	<select id="selectOne" parameterType="string" resultMap="merSettleConfigMap">
+		<include refid="defaultSelect" />
+		WHERE msc.mer_settle_conf_id = #{ID}
+	</select>
+	
+	<select id="selectBy" resultMap="merSettleConfigMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.merId !=null">
+					msc.mer_id = #{filterEntity.merId}
+				</if>
+			</if>
+		</where>
+		<if test="start !=null and count != null">
+			LIMIT #{start}, #{count}
+		</if>
+	</select>
+	
+	<select id="selectAll" resultMap="merSettleConfigMap">
+		<include refid="defaultSelect" />
+	</select>
+	
+	<sql id="defaultCount">
+		SELECT count(*) FROM mer_settle_conf
+	</sql>
+	
+	<select id="countBy" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					mer_settle_conf_id = #{filterEntity.ID}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+	
+	<update id="update" parameterType="MerSettleConfigEntity">
+		update mer_settle_conf
+		<set>
+			<if test="subMerID != null">mer_settle_conf_id = #{subMerID},</if>
+			<if test="settleCurrencies != null">settle_currencies = #{settleCurrencies},</if>
+			<if test="settleCondition != null">settle_cond = #{settleCondition},</if>
+			<if test="settlePeriodDay != null">settle_period_day = #{settlePeriodDay},</if>
+			<if test="maxDeliveryDay != null">max_delivery_day = #{maxDeliveryDay},</if>
+			<if test="reconciliationDiffPolicy != null">reconciliation_diff_policy = #{reconciliationDiffPolicy},</if>
+			<if test="depositRate != null">deposit_rate = #{depositRate},</if>
+			<if test="freezePolicy != null">freeze_policy = #{freezePolicy},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="updateDate != null">update_date = #{updateDate},</if>
+		</set>
+		where mer_settle_conf_id = #{ID}
+	</update>
+
+	<delete id="delete" parameterType="string">
+		DELETE FROM mer_settle_conf 
+		WHERE mer_settle_conf_id = #{ID}
+	</delete>
+	
+</mapper>

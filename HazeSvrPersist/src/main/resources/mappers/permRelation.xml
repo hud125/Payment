@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.perm.PermRelationMapper">
+
+	<!-- result maps -->
+	<resultMap id="permRelationMap" type="PermRelationEntity">
+		<association property="user" javaType="UserEntity" resultMap="com.aurfy.haze.dao.infra.UserMapper.userMap" />
+		<association property="role" javaType="PermRoleEntity" resultMap="com.aurfy.haze.dao.perm.PermRoleMapper.permRoleMap" />
+	</resultMap>
+
+	<insert id="insert" parameterType="PermRelationEntity" >
+		INSERT INTO p_relation 
+		(user_id, role_id)
+		VALUES 
+		(#{user.ID}, #{role.ID})
+	</insert>
+
+	<select id="selectPermRelationByUser" parameterType="string" resultMap="permRelationMap">
+		SELECT  user.user_id, user.user_name, user.first_name, user.last_name, user.encrypted_passwd, 
+				user.passwd_salt, user.security_question, user.security_answer, user.email user_email, 
+				user.reg_ip, user.license_agreed, user.status user_status, user.comments user_comments, 
+				user.creator_id user_creator_id, user.owner_id user_owner_id, 
+				user.create_date user_cr_date, user.update_date user_up_date,
+				role.role_id, role.role_name, role.comments role_comments, 
+				role.create_date role_cr_date, role.update_date role_up_date
+		FROM p_relation prel 
+			left join users user on prel.user_id = user.user_id
+			left join p_role role on prel.role_id = role.role_id
+		WHERE prel.user_id = #{user.ID}
+	</select>
+
+	<select id="selectPermRelationByRole" parameterType="string" resultMap="permRelationMap">
+		SELECT  user.user_id, user.user_name, user.first_name, user.last_name, user.encrypted_passwd, 
+				user.passwd_salt, user.security_question, user.security_answer, user.email user_email, 
+				user.reg_ip, user.license_agreed, user.status user_status, user.comments user_comments, 
+				user.creator_id user_creator_id, user.owner_id user_owner_id, 
+				user.create_date user_cr_date, user.update_date user_up_date,
+				role.role_id, role.role_name, role.comments role_comments, 
+				role.create_date role_cr_date, role.update_date role_up_date
+		FROM p_relation prel 
+			left join users user on prel.user_id = user.user_id
+			left join p_role role on prel.role_id = role.role_id
+		WHERE prel.role_id = #{role.ID}
+	</select>
+
+	<update id="updatePermRelationByUser" parameterType="PermRelationEntity">
+		UPDATE p_relation 
+		<set>
+	      <if test="role != null">role_id = #{role.ID},</if>
+	    </set>
+		WHERE user_id = #{user.ID}
+	</update>
+
+	<delete id="deletePermRelationByUserAndRole" parameterType="PermRelationEntity">
+		DELETE FROM p_relation 
+		WHERE user_id = #{user.ID} and role_id = #{role.ID}
+	</delete>
+
+</mapper>

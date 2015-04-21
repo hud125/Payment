@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- https://ibatis.apache.org/docs/dotnet/datamapper/ch03s03.html -->
+
+<mapper namespace="com.aurfy.haze.dao.infra.ExchangeRateMapper">
+
+	<resultMap id="exchangeRateMap" type="ExchangeRateEntity">
+		<id column="ex_rate_id" property="ID" />
+		<result column="exchange_name" property="exchangeName" />
+		<result column="from_currency" property="fromCurrency" />
+		<result column="to_currency" property="toCurrency" />
+		<result column="buy_rate" property="buyRate" />
+		<result column="cash_buy_rate" property="cashBuyRate" />
+		<result column="sell_rate" property="sellRate" />
+		<result column="cash_sell_rate" property="cashSellRate" />
+		<result column="active" property="active" />
+		<result column="comments" property="comments" />
+		<result column="owner_id" property="ownerId" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" javaType="Date" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" javaType="Date" />
+				
+	</resultMap>
+	
+	<insert id="insert" parameterType="ExchangeRateEntity" statementType="PREPARED">
+		INSERT INTO exchange_rate 
+		(ex_rate_id, exchange_name, from_currency, to_currency, buy_rate,cash_buy_rate,sell_rate,
+		 cash_sell_rate,active,comments, owner_id,create_date, update_date)
+		VALUES 
+		(#{ID}, #{exchangeName}, #{fromCurrency}, #{toCurrency}, #{buyRate}, #{cashBuyRate}, #{sellRate}, #{cashSellRate}, 
+		#{active}, #{comments}, #{ownerId}, #{createDate}, #{updateDate})
+	</insert>
+	<sql id="defaultSelect">
+		SELECT  ex_rate_id, exchange_name, from_currency, to_currency, buy_rate,cash_buy_rate,sell_rate,
+		cash_sell_rate,active,comments, owner_id,create_date, update_date FROM exchange_rate 
+	</sql>
+	<select id="selectOne" parameterType="string" resultMap="exchangeRateMap">
+		<include refid="defaultSelect"/>
+		WHERE ex_rate_id = #{ID}
+	</select>
+	
+	<select id="selectBy" resultMap="exchangeRateMap">
+		<include refid="defaultSelect" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					ex_rate_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.exchangeName!=null">
+					AND exchange_name = #{filterEntity.exchangeName}
+				</if>
+				<if test="filterEntity.fromCurrency!=null">
+					AND from_currency = #{filterEntity.fromCurrency}
+				</if>
+				<if test="filterEntity.toCurrency!=null">
+					AND to_currency = #{filterEntity.toCurrency}
+				</if>
+				<if test="filterEntity.buyRate!=null">
+					AND buy_rate = #{filterEntity.buyRate}
+				</if>
+				<if test="filterEntity.cashBuyRate!=null">
+					AND cash_buy_rate = #{filterEntity.cashBuyRate}
+				</if>
+				<if test="filterEntity.sellRate!=null">
+					AND sell_rate = #{filterEntity.sellRate}
+				</if>
+				<if test="filterEntity.cashSellRate!=null">
+					AND cash_sell_rate = #{filterEntity.cashSellRate}
+				</if>
+				<if test="filterEntity.active!=null">
+					AND active = #{filterEntity.active}
+				</if>
+				<if test="filterEntity.comments!=null">
+					AND comments = #{filterEntity.comments}
+				</if>
+				<if test="filterEntity.ownerId!=null">
+					AND owner_id = #{filterEntity.ownerId}
+				</if>
+				<if test="filterEntity.createDate !=null">
+					AND create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate !=null">
+					AND update_date = #{filterEntity.updateDate}
+				</if>
+			</if>
+		</where>
+		LIMIT #{startIndex}, #{fetchRows}
+	</select>
+	
+	<select id="selectExchangeRateByName" parameterType="string" resultMap="exchangeRateMap">
+		<include refid="defaultSelect"/>
+		WHERE  exchange_name = #{exchangeName}
+	</select>
+	
+	<select id="selectExchangeRateByCurrency"  parameterType="String"  resultMap="exchangeRateMap">
+		<include refid="defaultSelect"/>
+		WHERE  from_currency = #{fromCurrency} AND to_Currency = #{toCurrency}                                       
+	</select>
+	<select id="selectAll" resultMap="exchangeRateMap">
+		<include refid="defaultSelect"/>
+	</select>
+	
+	
+	<sql id="defaultCount">
+		SELECT count(*) FROM exchange_rate
+	</sql>
+	
+	<select id="countBy" parameterType="ExchangeRateEntity" resultType="int">
+		<include refid="defaultCount" />
+		<where>
+			<if test="filterEntity!=null">
+				<if test="filterEntity.ID !=null">
+					ex_rate_id = #{filterEntity.ID}
+				</if>
+				<if test="filterEntity.exchangeName!=null">
+					AND exchange_name = #{filterEntity.exchangeName}
+				</if>
+				<if test="filterEntity.fromCurrency!=null">
+					AND from_currency = #{filterEntity.fromCurrency}
+				</if>
+				<if test="filterEntity.toCurrency!=null">
+					AND to_currency = #{filterEntity.toCurrency}
+				</if>
+				<if test="filterEntity.buyRate!=null">
+					AND buy_rate = #{filterEntity.buyRate}
+				</if>
+				<if test="filterEntity.cashBuyRate!=null">
+					AND cash_buy_rate = #{filterEntity.cashBuyRate}
+				</if>
+				<if test="filterEntity.sellRate!=null">
+					AND sell_rate = #{filterEntity.sellRate}
+				</if>
+				<if test="filterEntity.cashSellRate!=null">
+					AND cash_sell_rate = #{filterEntity.cashSellRate}
+				</if>
+				<if test="filterEntity.active!=null">
+					AND active = #{filterEntity.active}
+				</if>
+				<if test="filterEntity.comments!=null">
+					AND comments = #{filterEntity.comments}
+				</if>
+				<if test="filterEntity.ownerId!=null">
+					AND owner_id = #{filterEntity.ownerId}
+				</if>
+				<if test="filterEntity.createDate !=null">
+					AND create_date = #{filterEntity.createDate}
+				</if>
+				<if test="filterEntity.updateDate !=null">
+					AND update_date = #{filterEntity.updateDate}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="countAll" resultType="int">
+		<include refid="defaultCount" />
+	</select>
+	
+	<update id="update" parameterType="ExchangeRateEntity" >
+		UPDATE exchange_rate SET exchange_name=#{exchangeName}, from_currency=#{fromCurrency},
+		to_currency=#{toCurrency}, buy_rate=#{buyRate},  cash_buy_rate=#{cashBuyRate}, sell_rate=#{sellRate},
+		cash_sell_rate=#{cashSellRate},active=#{active},owner_id=#{ownerId},comments=#{comments}, 
+		create_date=#{createDate},update_date=#{updateDate}
+		WHERE ex_rate_id = #{ID}
+	</update>
+
+	<delete id="delete" parameterType="string">
+		DELETE FROM exchange_rate WHERE ex_rate_id = #{ID}
+	</delete>
+	
+</mapper>
